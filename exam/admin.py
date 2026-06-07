@@ -3,7 +3,7 @@ from .models import Exam,UserExam,Question, UserAnswer
 from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse,path
-from django.shortcuts import redirect
+from django.shortcuts import redirect,get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse, FileResponse
 from django.db.models import Count, Q, Avg
@@ -36,7 +36,7 @@ class ExamAdmin(admin.ModelAdmin):
     )
         
     # Optional: Add actions
-    actions = ['duplicate_exam','export_selected_scoreboards','recalculate_exam_scores']    
+    actions = ['duplicate_exam','export_selected_scoreboards','recalculate_exam_scores','completed_all']    
 
     def duplicate_exam(self, request, queryset):
         for exam in queryset:
@@ -47,6 +47,21 @@ class ExamAdmin(admin.ModelAdmin):
     duplicate_exam.short_description = "Duplicate selected exams"
 
 
+    
+    def completed_all(self, request, queryset):
+        exam = Exam.objects.filter(
+            exam__in=queryset
+        ).update(stats=True)
+        updated = UserExam.objects.filter(
+            exam__in=queryset,
+            is_completed=False
+        ).update(is_completed=True)
+        
+        self.message_user(
+            request,
+            f'Successfully marked {updated} user exams as completed.',
+            messages.SUCCESS
+        )
 
     def recalculate_button(self, obj):
         """Add a button to recalculate scores for this exam"""
@@ -110,13 +125,13 @@ class ExamAdmin(admin.ModelAdmin):
         """Display buttons for scoreboard actions directly in admin list"""
         return format_html(
             '<div style="white-space: nowrap;">'
-            '<a class="button" href="{}" style="background-color: #2196F3; color: white; padding: 4px 8px; text-decoration: none; border-radius: 4px; margin-right: 5px; font-size: 12px;">📊 CSV</a>'
-            '<a class="button" href="{}" style="background-color: #4CAF50; color: white; padding: 4px 8px; text-decoration: none; border-radius: 4px; margin-right: 5px; font-size: 12px;">📈 Excel</a>'
-            '<a class="button" href="{}" style="background-color: #FF9800; color: white; padding: 4px 8px; text-decoration: none; border-radius: 4px; font-size: 12px;">🔄 View</a>',
-            '</div>',
-            reverse('admin:export_csv_scoreboard', args=[obj.id]),
-            reverse('admin:export_excel_scoreboard', args=[obj.id]),
-            reverse('admin:view_scoreboard_html', args=[obj.id]),
+          '<a class="button" href="{}" style="background-color: #2196F3; color: white; padding: 4px 8px; text-decoration: none; border-radius: 4px; margin-right: 5px; font-size: 12px;">📊 CSV</a>'
+        '<a class="button" href="{}" style="background-color: #4CAF50; color: white; padding: 4px 8px; text-decoration: none; border-radius: 4px; margin-right: 5px; font-size: 12px;">📈 Excel</a>'
+        '<a class="button" href="{}" style="background-color: #FF9800; color: white; padding: 4px 8px; text-decoration: none; border-radius: 4px; font-size: 12px;">🔄 View</a>'
+        '</div>',           # ← moved inside the template string
+        reverse('admin:export_csv_scoreboard', args=[obj.id]),
+        reverse('admin:export_excel_scoreboard', args=[obj.id]),
+        reverse('admin:view_scoreboard_html', args=[obj.id]),
         )
     scoreboard_buttons.short_description = 'Scoreboard'
     scoreboard_buttons.allow_tags = True
@@ -177,6 +192,11 @@ class ExamAdmin(admin.ModelAdmin):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
+            # Completed all URL
+            path('completed_all/<int:exam_id>/', 
+                 self.admin_site.admin_view(self.completed_all), 
+                 name='exam-completed-all'),
+            # Export URLs
             path('export-csv/<int:exam_id>/', 
                  self.admin_site.admin_view(self.export_csv_scoreboard),
                  name='export_csv_scoreboard'),

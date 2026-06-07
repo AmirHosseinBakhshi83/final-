@@ -19,10 +19,16 @@ class Exam(models.Model):
     start_date = models.DateTimeField(default= timezone.now)
     end_date = models.DateTimeField(default= timezone.now)
     duration_lenght = models.IntegerField(default=120, null=False)
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
+    description = models.TextField(max_length=255 , default="")
+
     def __str__(self):
         return self.title
     
+    def is_active(self):
+        if timezone.now()>self.end_date:
+            self.status = False
+
 
 class Question(models.Model):
     TYPE_CHOICES = (
@@ -58,9 +64,6 @@ class UserExam(models.Model):
         unique_together = ('profile', 'exam')
 
     def get_remaining_seconds(self):
-        if self.is_completed:
-            return 0
-        
         elapsed = timezone.now() - self.started_date
         total_seconds = self.exam.duration_lenght * 60  # Convert minutes to seconds
         remaining = total_seconds - elapsed.total_seconds()
@@ -142,7 +145,6 @@ class UserExam(models.Model):
         # Split into individual answers
         user_parts = user_answer.split(',')
         correct_parts = list(correct_answer)
-        print( user_parts + correct_parts)
         
         # Ensure both have the same length
         min_length = min(len(user_parts), len(correct_parts))
@@ -153,6 +155,7 @@ class UserExam(models.Model):
         correct_count = 0
         incorrect_count = 0
         
+
         for i in range(min_length):
             user_val = user_parts[i].upper()
             correct_val = correct_parts[i].upper()

@@ -9,23 +9,16 @@ from django.utils import timezone
 def dashboard(request):
     user_exams = request.user.profile.assigned_exams.all()
     context = {'user_exams':user_exams}
-    return render(request,'dashboard/dashboard-exams.html', context)
+    return render(request,'dashboard/dashboard-main.html', context)
 
 @login_required
 def exam_detail(request, pid):
     user_exam = UserExam.objects.get(id = pid)
     is_complete = user_exam.is_completed
     exam = Exam.objects.get(id = user_exam.exam_id)
-    now = timezone.now()
-    if exam.start_date <= now <= exam.end_date:
-        is_active = True
-    else:
-        is_active = False
-
     context = {
         'user_exam_id' : user_exam.id , 
         'exam_id':exam.id ,
-        'is_active':is_active,
         'is_complete':is_complete,
         'title':exam.title,
         'type':exam.exam_type,
@@ -34,6 +27,7 @@ def exam_detail(request, pid):
         'end_date':exam.end_date,
         'duration_lenght':exam.duration_lenght,
         'status':exam.status,
+        'description' : exam.description,
 
     }
     print(context)

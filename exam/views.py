@@ -33,13 +33,7 @@ def exam_view(request, exam_id):
             profile=request.user.profile
         ).exists()
     if not has_user_exam:
-            messages.error(request, 'شما دسترسی به این صفحه را ندارید. این آزمون به شما اختصاص داده نشده است.')
             return redirect('/dashboard')
-    
-    # تشخیص نوع درخواست
-    is_auto_save = request.POST.get('auto_save') == 'true'
-    is_final_submit = request.POST.get('final_submit') == 'true'
-    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
     
     # Get or create UserExam with proper error handling
     try:
@@ -54,18 +48,13 @@ def exam_view(request, exam_id):
             user_exam.save()
 
     except UserExam.DoesNotExist:
-        # If no existing exam, create one (optional: check if user is allowed to take it)
-        user_exam = UserExam.objects.create(
-            exam=exam,
-            profile=request.user.profile,
-        )
+        return redirect('/dashboard')   
+
     
     # Check if exam is expired before processing
     if user_exam.is_expired():
         user_exam.is_completed = True
         user_exam.save()
-        if is_ajax:
-            return JsonResponse({'error': 'Time expired!', 'redirect': 'expired'}, status=400)
         return render(request, "exam/exam-expired.html", {"exam": exam})
     
     questions = exam.questions.all().order_by("id")
@@ -77,43 +66,10 @@ def exam_view(request, exam_id):
         if user_exam.is_expired():
             user_exam.is_completed = True
             user_exam.save()
-            if is_ajax:
-                return JsonResponse({'error': 'Time expired! Cannot submit.'}, status=400)
             return render(request, "exam/exam-expired.html", {"exam": exam})
         
-        # برای ذخیره خودکار یا ثبت نهایی
-        if is_auto_save or (is_ajax and not is_final_submit):
-            # ذخیره موقت پاسخ‌ها در session (بدون اعتبارسنجی کامل)
-            temp_answers = {}
-            for key, value in request.POST.items():
-                if key.startswith('q'):
-                    temp_answers[key] = value
-            
-            # ذخیره در session با timestamp
-            session_key = f'exam_{exam_id}_temp_answers'
-            request.session[session_key] = {
-                'answers': temp_answers,
-                'timestamp': timezone.now().isoformat(),
-                'question_count': len(questions)
-            }
-            request.session.modified = True
-            
-            if is_ajax:
-                return JsonResponse({
-                    'status': 'success',
-                    'message': 'پاسخ‌ها موقتاً ذخیره شد',
-                    'saved_at': timezone.now().strftime('%H:%M:%S'),
-                    'answers_count': len(temp_answers)
-                })
-            # اگر درخواست معمولی بود، به همان صفحه برگردان
-            return redirect('exam:exam_view', exam_id=exam_id)
-        
-        # ثبت نهایی
-        elif is_final_submit or not is_ajax:
-            form = ExamAnswerForm(request.POST, questions=questions)
-            print("Form is valid:", form.is_valid())
-            
-            if form.is_valid():
+        form = ExamAnswerForm(request.POST, questions=questions)
+        if form.is_valid():
                 def get_default_for_question_type(question_type):
                     """مقدار پیش‌فرض برای هر نوع سوال"""
                     defaults = {
@@ -140,35 +96,14 @@ def exam_view(request, exam_id):
                             defaults={"answer_value": answer_value},
                         )
 
-                    user_exam.is_completed = True
-                    print(UserAnswer.objects.all())
                     user_exam.save()
                     
                     # Calculate initial score
                     user_exam.recalculate_score()
                     
-                    # پاک کردن session ذخیره موقت
-                    session_key = f'exam_{exam_id}_temp_answers'
-                    if session_key in request.session:
-                        del request.session[session_key]
 
-                    if is_ajax:
-                        return JsonResponse({
-                            'status': 'success',
-                            'message': 'آزمون با موفقیت ثبت شد',
-                            'redirect_url': reverse('dashboard:dashboard')
-                        })
-                    
-                    return redirect('dashboard:dashboard')
-            else:
-                # Form invalid
+        else:
                 print("Form errors:", form.errors)
-                if is_ajax:
-                    return JsonResponse({
-                        'error': 'Form validation failed',
-                        'errors': form.errors
-                    }, status=400)
-                # اگر فرم نامعتبر بود و درخواست معمولی، دوباره فرم رو نمایش بده
                 return render(
                     request,
                     "exam/exam-view.html",
@@ -181,27 +116,10 @@ def exam_view(request, exam_id):
                         "remaining_seconds": remaining_seconds,
                     },
                 )
-    
+                
     # درخواست GET - بازیابی پاسخ‌های موقت از session اگر وجود داشته باشد
     else:
         form = ExamAnswerForm(questions=questions)
-        
-        # بازیابی پاسخ‌های موقت از session (اگر کاربر قبلاً ذخیره کرده باشد)
-        session_key = f'exam_{exam_id}_temp_answers'
-        if session_key in request.session:
-            temp_data = request.session[session_key]
-            temp_answers = temp_data.get('answers', {})
-            
-            # پر کردن فرم با پاسخ‌های موقت
-            for key, value in temp_answers.items():
-                if key in form.fields:
-                    form.fields[key].initial = value
-            
-            # نمایش پیام به کاربر
-            saved_time = temp_data.get('timestamp', '')
-            if saved_time:
-                messages.info(request, f'پاسخ‌های ذخیره شده موقت از تاریخ {saved_time} بازیابی شد.')
-
     return render(
         request,
         "exam/exam-view.html",

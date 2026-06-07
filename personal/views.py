@@ -10,15 +10,17 @@ def profile_edit_view(request):
     """ویو ویرایش پروفایل کاربر"""
     
     # دریافت یا ایجاد پروفایل کاربر
+   # Get or create profile for the current user
     profile, created = Profile.objects.get_or_create(user=request.user)
+    
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=profile)
         if form.is_valid():
             form.save()
-            messages.success(request, 'اطلاعات پروفایل با موفقیت ذخیره شد')
-            return redirect('profile:view')  # آدرس صفحه نمایش پروفایل
+            # Redirect to home page or dashboard after profile completion
+            return redirect('dashboard:dashboard')  # or redirect to 'accounts:dashboard' or '/'
         else:
-            messages.error(request, 'خطا در ذخیره اطلاعات. لطفاً مجدد تلاش کنید')
+            print(form.errors)
     else:
         form = ProfileForm(instance=profile)
     

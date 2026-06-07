@@ -1,552 +1,709 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-
+<html lang="fa" dir="rtl" data-theme="light">
 <head>
-    <title>Scoreboard - {{ exam.title }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>اسکوربورد | هلیکس — گروه آموزشی المپیاد زیست‌شناسی</title>
+    <link rel="stylesheet" href="{% static 'css/website.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="shortcut icon" href="{% static 'images/hellix-logo-small.ico' %}" type="image/x-icon" />
     <style>
-        :root {
-            --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --primary-light: #3b82f6;
-            --secondary: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --dark: #0f172a;
-            --gray: #64748b;
-            --gray-light: #94a3b8;
-            --light-gray: #f1f5f9;
-            --white: #ffffff;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            --radius: 16px;
-        }
-
         /* ============================================
-       SCOREBOARD PAGE STYLES - MODERN DASHBOARD
-       ============================================ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fc 0%, #eef2f8 100%);
+           SCOREBOARD PAGE SPECIFIC STYLES
+           ============================================ */
+        
+        .scoreboard-page-wrapper {
             min-height: 100vh;
-            padding: 2rem;
-            direction: ltr;
+            background: var(--bg-page);
+            padding-top: 70px;
         }
-
-        /* ========== MAIN CONTAINER ========== */
-        .container {
-            max-width: 1400px;
+        
+        .scoreboard-container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: var(--white);
-            border-radius: 32px 32px 0px 0px;
-            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            animation: fadeInUp 0.5s ease;
+            padding: 2rem;
         }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-
+        
+        /* Header Section */
+        .scoreboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            transition: all var(--transition);
+        }
+        
+        .scoreboard-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        
+        .scoreboard-header h1 i {
+            color: var(--teal);
+            font-size: 1.8rem;
+        }
+        
+        .scoreboard-header p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Stats Cards */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            text-align: center;
+            transition: all var(--transition);
+            animation: slideInUp 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        
+        @keyframes slideInUp {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
-        /* ========== HEADER ========== */
-        .header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            padding: 2rem;
-            text-align: center;
-            color: white;
-        }
-
-        .header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 0.9rem;
-        }
-
-        /* ========== STATS CARDS ========== */
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.2rem;
-            padding: 1.5rem;
-            background: var(--light-gray);
-        }
-
-        .stat-card {
-            background: var(--white);
-            border-radius: 20px;
-            padding: 1.2rem;
-            text-align: center;
-            transition: all 0.3s;
-            border: 1px solid #eef2f8;
-        }
-
+        
         .stat-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-4px);
+            border-color: var(--border-accent);
             box-shadow: var(--shadow-md);
         }
-
+        
         .stat-card .number {
-            font-size: 2rem;
-            font-weight: 800;
-            color: var(--primary);
-            line-height: 1.2;
-        }
-
-        .stat-card .label {
-            color: var(--gray);
-            font-size: 0.75rem;
-            margin-top: 0.3rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* ========== USER RANK SECTION ========== */
-        .user-rank {
-            background: linear-gradient(135deg, #fef3c7, #fffbeb);
-            padding: 1rem 1.5rem;
-            border-radius: 16px;
+            font-size: 2.5rem;
             font-weight: 700;
-            text-align: center;
-            color: #92400e;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 1rem;
-            border: 1px solid #fde68a;
+            background: linear-gradient(135deg, var(--teal), var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
         }
-
-        /* ========== CONTROLS SECTION ========== */
-        .controls {
+        
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+        
+        /* Filter Bar */
+        .filter-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
             padding: 1rem 1.5rem;
-            background: var(--white);
-            border-bottom: 1px solid #eef2f8;
+            margin-bottom: 2rem;
             display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-
-        .search-form {
+        
+        .filter-group {
             display: flex;
-            gap: 0.5rem;
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .search-form input {
-            flex: 1;
-            padding: 0.6rem 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            font-family: inherit;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-        }
-
-        .search-form input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .search-form button {
-            padding: 0.6rem 1.2rem;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .search-form button:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .filters {
-            display: flex;
-            gap: 0.5rem;
+            align-items: center;
+            gap: 1rem;
             flex-wrap: wrap;
         }
-
-        .filters select,
-        .filters a {
-            padding: 0.6rem 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            background: var(--white);
-            cursor: pointer;
-            text-decoration: none;
-            color: var(--dark);
+        
+        .filter-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             font-size: 0.85rem;
-            font-family: inherit;
-            transition: all 0.2s;
+            color: var(--text-secondary);
         }
-
-        .filters select:hover,
-        .filters a:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+        
+        .filter-group label i {
+            color: var(--teal);
         }
-
-        /* ========== TABLE STYLES ========== */
-        table {
+        
+        .filter-select {
+            padding: 0.5rem 1rem;
+            background: var(--bg-surface-alt);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-family: var(--font);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+        
+        .filter-select:hover {
+            border-color: var(--teal);
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(0, 229, 196, 0.1);
+        }
+        
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-surface-alt);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-pill);
+            padding: 0.4rem 1rem;
+            transition: all var(--transition);
+        }
+        
+        .search-box:focus-within {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(0, 229, 196, 0.1);
+        }
+        
+        .search-box i {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        
+        .search-box input {
+            background: none;
+            border: none;
+            padding: 0.4rem 0;
+            font-family: var(--font);
+            font-size: 0.85rem;
+            color: var(--text-primary);
+            outline: none;
+        }
+        
+        .search-box input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        /* Table Styles */
+        .scoreboard-table-wrapper {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            overflow-x: auto;
+            margin-bottom: 2rem;
+            transition: all var(--transition);
+        }
+        
+        .scoreboard-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
         }
-
-        th {
-            background: var(--light-gray);
-            color: var(--dark);
-            padding: 1rem;
-            text-align: left;
-            font-weight: 700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #e2e8f0;
+        
+        .scoreboard-table thead {
+            background: var(--bg-surface-alt);
+            border-bottom: 1px solid var(--border-light);
         }
-
-        td {
-            padding: 0.9rem 1rem;
-            border-bottom: 1px solid #eef2f8;
+        
+        .scoreboard-table th {
+            padding: 1rem 1.25rem;
+            text-align: center;
             font-size: 0.85rem;
-            color: var(--gray);
-        }
-
-        tr:hover td {
-            background: #fafcff;
-        }
-
-        /* Rank specific styles */
-        .rank-1 {
-            background: linear-gradient(90deg, #fffbeb, transparent);
-        }
-
-        .rank-1 td:first-child {
-            font-weight: 800;
-            color: #d97706;
-            font-size: 1.1rem;
-        }
-
-        .rank-2 {
-            background: linear-gradient(90deg, #f5f5f5, transparent);
-        }
-
-        .rank-2 td:first-child {
-            font-weight: 800;
-            color: #78716c;
-            font-size: 1.1rem;
-        }
-
-        .rank-3 {
-            background: linear-gradient(90deg, #fef3c7, transparent);
-        }
-
-        .rank-3 td:first-child {
-            font-weight: 800;
-            color: #b45309;
-            font-size: 1.1rem;
-        }
-
-        .rank-none {
-            background: var(--light-gray);
-        }
-
-        .rank-none td:first-child {
-            font-weight: 800;
-            color: #6d6d6d;
-            font-size: 1.1rem;
-        }
-
-        /* Username styling */
-        td:nth-child(2) {
             font-weight: 600;
-            color: var(--dark);
+            color: var(--text-secondary);
+            letter-spacing: 0.03em;
         }
-
-        /* Score styling */
-        td:nth-child(4) {
+        
+        .scoreboard-table td {
+            padding: 1rem 1.25rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .scoreboard-table tbody tr {
+            transition: all var(--transition);
+        }
+        
+        .scoreboard-table tbody tr:hover {
+            background: var(--bg-surface-alt);
+        }
+        
+        .scoreboard-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Rank Styles */
+        .rank-1 {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+        }
+        
+        .rank-2 {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(192, 192, 192, 0.05));
+        }
+        
+        .rank-3 {
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(205, 127, 50, 0.05));
+        }
+        
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
             font-weight: 700;
-            color: var(--primary);
         }
-
-        /* Percentage styles */
-        .percentage-high {
-            color: #10b981;
-            font-weight: 700;
-            background: #d1fae5;
-            padding: 0.2rem 0.5rem;
-            border-radius: 30px;
-            display: inline-block;
-            font-size: 0.75rem;
+        
+        .rank-badge.gold {
+            color: #ffd700;
         }
-
-        .percentage-medium {
-            color: #f59e0b;
-            font-weight: 700;
-            background: #fed7aa;
-            padding: 0.2rem 0.5rem;
-            border-radius: 30px;
-            display: inline-block;
-            font-size: 0.75rem;
+        
+        .rank-badge.silver {
+            color: #c0c0c0;
         }
-
+        
+        .rank-badge.bronze {
+            color: #cd7f32;
+        }
+        
         .percentage {
-            color: #001299;
-            font-weight: 700;
-            background: #e6e2fe;
-            padding: 0.2rem 0.5rem;
-            border-radius: 30px;
-            display: inline-block;
-            font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            font-size: 0.85rem;
         }
-
-        /* ========== PAGINATION ========== */
+        
+        .percentage.high {
+            background: rgba(16, 185, 129, 0.12);
+            color: #10b981;
+        }
+        
+        .percentage.medium {
+            background: rgba(245, 158, 11, 0.12);
+            color: #f59e0b;
+        }
+        
+        .percentage.low {
+            background: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+        }
+        
+        /* Current User Row Highlight */
+        .current-user-row {
+            background: var(--bg-dna);
+            border-right: 3px solid var(--teal);
+            position: relative;
+        }
+        
+        .current-user-row::before {
+            content: 'شما';
+            position: absolute;
+            right: -1px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            background: var(--teal);
+            color: var(--text-on-accent);
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--radius-pill) 0 0 var(--radius-pill);
+            font-weight: 600;
+        }
+        
+        /* Pagination */
         .pagination {
-            padding: 1.2rem;
             display: flex;
             justify-content: center;
+            align-items: center;
             gap: 0.5rem;
             flex-wrap: wrap;
-            background: var(--white);
-            border-top: 1px solid #eef2f8;
+            margin-top: 2rem;
         }
-
+        
         .pagination a,
-        .pagination span {
-            padding: 0.4rem 0.8rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            text-decoration: none;
-            color: var(--gray);
-            font-size: 0.8rem;
-            transition: all 0.2s;
-        }
-
-        .pagination a:hover {
-            background: var(--light-gray);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
         .pagination .current {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
-            border-color: var(--primary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all var(--transition);
         }
-
-        /* ========== RESPONSIVE ========== */
+        
+        .pagination a:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+            transform: translateY(-2px);
+        }
+        
+        .pagination .current {
+            background: linear-gradient(135deg, var(--teal), var(--cyan-mid));
+            border-color: var(--teal);
+            color: var(--text-on-accent);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .empty-state p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Responsive Design */
         @media (max-width: 768px) {
-            body {
+            .scoreboard-container {
                 padding: 1rem;
             }
-
-            .controls {
-                flex-direction: column;
+            
+            .scoreboard-header h1 {
+                font-size: 1.5rem;
+                display: none;
             }
-
+            
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                justify-content: space-between;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .search-box input {
+                flex: 1;
+            }
+            
+            .scoreboard-table th,
+            .scoreboard-table td {
+                padding: 0.75rem;
+                font-size: 0.8rem;
+            }
+            
+            .pagination a,
+            .pagination .current {
+                min-width: 35px;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.75rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
             .stats {
                 grid-template-columns: 1fr;
             }
-
-            table {
-                font-size: 0.75rem;
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
             }
-
-            th,
-            td {
-                padding: 0.6rem 0.4rem;
-            }
-
-            .header h1 {
-                font-size: 1.2rem;
-            }
-
-            .filters {
-                justify-content: center;
-            }
-
-            .search-form {
+            
+            .filter-select {
                 width: 100%;
             }
         }
-
-        @media (max-width: 480px) {
-            .stats {
-                gap: 0.8rem;
-                padding: 1rem;
+        
+        /* Print Styles */
+        @media print {
+            .main-nav,
+            .filter-bar,
+            .pagination,
+            .theme-toggle,
+            .logout-btn,
+            .action-buttons {
+                display: none !important;
             }
-
-            .stat-card .number {
-                font-size: 1.5rem;
+            
+            .scoreboard-page-wrapper {
+                padding-top: 0;
             }
-
-            th {
-                font-size: 0.65rem;
+            
+            .scoreboard-container {
+                padding: 0;
             }
-
-            td {
-                font-size: 0.7rem;
-                padding: 0.5rem 0.3rem;
+            
+            .stat-card {
+                border: 1px solid #ddd;
             }
-
-            .pagination a,
-            .pagination span {
-                padding: 0.3rem 0.6rem;
-                font-size: 0.7rem;
+            
+            .scoreboard-table-wrapper {
+                border: 1px solid #ddd;
             }
         }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .scoreboard-table tbody tr {
+            animation: fadeIn 0.3s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .scoreboard-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
+        .scoreboard-table tbody tr:nth-child(2) { animation-delay: 0.1s; }
+        .scoreboard-table tbody tr:nth-child(3) { animation-delay: 0.15s; }
+        .scoreboard-table tbody tr:nth-child(4) { animation-delay: 0.2s; }
+        .scoreboard-table tbody tr:nth-child(5) { animation-delay: 0.25s; }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>اسکوربورد</h1>
-            <p>{{ exam.title }}</p>
-        </div>
+    <div class="scoreboard-page-wrapper">
 
-        <div class="stats">
-            <div class="stat-card">
-                <div class="number">{{ stats.total|default:0 }}</div>
-                <div class="label">کل شرکت‌کنندگان</div>
+        <div class="scoreboard-container">
+            <!-- Header -->
+            <div class="scoreboard-header">
+                <h1>
+                    <i class="fas fa-trophy"></i>
+                    اسکوربورد
+                </h1>
+                <p>{{ exam.title }}</p>
             </div>
-            {% if user_rank %}
-            <div class="stat-card">
-                <div class="number">{{ user_rank }}</div>
-                <div class="label">رتبه شما</div>
+
+            <!-- Stats Cards -->
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="number">{{ stats.total|default:0 }}</div>
+                    <div class="label">
+                        <i class="fas fa-users"></i> کل شرکت‌کنندگان
+                    </div>
+                </div>
+                {% if user_rank %}
+                <div class="stat-card">
+                    <div class="number">{{ user_rank }}</div>
+                    <div class="label">
+                        <i class="fas fa-medal"></i> رتبه شما
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                
+                <div class="filter-group">
+                    <label><i class="fas fa-list"></i> تعداد در هر صفحه:</label>
+                    <select name="limit" class="filter-select" id="limitSelect">
+                        <option value="10" {% if limit == '10' %}selected{% endif %}>۱۰</option>
+                        <option value="25" {% if limit == '25' %}selected{% endif %}>۲۵</option>
+                        <option value="50" {% if limit == '50' %}selected{% endif %}>۵۰</option>
+                        <option value="100" {% if limit == '100' %}selected{% endif %}>۱۰۰</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Scoreboard Table -->
+            <div class="scoreboard-table-wrapper">
+                <table class="scoreboard-table">
+                    <thead>
+                        <tr>
+                            <th>رتبه</th>
+                            <th>نام</th>
+                            <th>نام خانوادگی</th>
+                            <th>نمره</th>
+                            <th>درصد</th>
+                        </thead>
+                    <tbody>
+                        {% for entry in scoreboard %}
+                        <tr class="{% if entry.user_id == request.user.id %}current-user-row{% endif %} rank-{{ entry.rank|default:'' }}">
+                            <td class="rank-cell">
+                                {% if entry.rank == 1 %}
+                                <span class="rank-badge gold">
+                                    <i class="fas fa-crown"></i> {{ entry.rank }}
+                                </span>
+                                {% elif entry.rank == 2 %}
+                                <span class="rank-badge silver">
+                                    <i class="fas fa-medal"></i> {{ entry.rank }}
+                                </span>
+                                {% elif entry.rank == 3 %}
+                                <span class="rank-badge bronze">
+                                    <i class="fas fa-medal"></i> {{ entry.rank }}
+                                </span>
+                                {% else %}
+                                {{ entry.rank }}
+                                {% endif %}
+                            </td>
+                            <td>{{ entry.first_name|default:"-" }}</td>
+                            <td>{{ entry.last_name|default:"-" }}</td>
+                            <td class="score-value">{{ entry.score|floatformat:2 }}</td>
+                            <td>
+                                {% with percentage=entry.percentage|floatformat:0 %}
+                                <span class="percentage 
+                                    {% if percentage >= 70 %}high
+                                    {% elif percentage >= 40 %}medium
+                                    {% else %}low{% endif %}">
+                                    {{ entry.percentage|floatformat:1 }}%
+                                </span>
+                                {% endwith %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                <i class="fas fa-users-slash"></i>
+                                <p>هنوز شرکت‌کننده‌ای در این آزمون ثبت نشده است!</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            {% if scoreboard.has_other_pages %}
+            <div class="pagination">
+                {% if scoreboard.has_previous %}
+                <a href="?page=1{% if search %}&search={{ search }}{% endif %}{% if show_top %}&top={{ show_top }}{% endif %}{% if limit %}&limit={{ limit }}{% endif %}">
+                    <i class="fas fa-angle-double-right"></i>
+                </a>
+                <a href="?page={{ scoreboard.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if show_top %}&top={{ show_top }}{% endif %}{% if limit %}&limit={{ limit }}{% endif %}">
+                    <i class="fas fa-angle-right"></i>
+                </a>
+                {% endif %}
+
+                <span class="current">
+                    صفحه {{ scoreboard.number }} از {{ scoreboard.paginator.num_pages }}
+                </span>
+
+                {% if scoreboard.has_next %}
+                <a href="?page={{ scoreboard.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if show_top %}&top={{ show_top }}{% endif %}{% if limit %}&limit={{ limit }}{% endif %}">
+                    <i class="fas fa-angle-left"></i>
+                </a>
+                <a href="?page={{ scoreboard.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if show_top %}&top={{ show_top }}{% endif %}{% if limit %}&limit={{ limit }}{% endif %}">
+                    <i class="fas fa-angle-double-left"></i>
+                </a>
+                {% endif %}
             </div>
             {% endif %}
         </div>
-
-
-
     </div>
 
+    <!-- Hidden Form for Filters -->
     <form id="filter-form" method="get" style="display: none;">
-        <input type="hidden" name="search" value="{{ search|default:'' }}">
-        <input type="hidden" name="top" id="top-input">
-        <input type="hidden" name="limit" id="limit-input">
+        <input type="hidden" name="search" id="search-input" value="{{ search|default:'' }}">
+        <input type="hidden" name="top" id="top-input" value="{{ show_top|default:'' }}">
+        <input type="hidden" name="limit" id="limit-input" value="{{ limit|default:'10' }}">
+        <input type="hidden" name="page" id="page-input" value="1">
     </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Score</th>
-                <th>Percentage</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for entry in scoreboard %}
-            {% if entry.rank <= 3 %} <tr class="rank-{{ entry.rank|default:'' }}">
-                <td>
-                    {% if entry.rank == 1 %}🥇 {{ entry.rank }}
-                    {% elif entry.rank == 2 %}🥈 {{ entry.rank }}
-                    {% elif entry.rank == 3 %}🥉 {{ entry.rank }}
-                    {% else %}{{ entry.rank }}{% endif %}
-                </td>
-                <td>{{ entry.first_name|default:"-" }}</td>
-                <td>{{ entry.last_name|default:"-" }}</td>
-                <td>{{ entry.score|floatformat:2 }}</td>
-                <td>
-                    <span class="percentage">
-                        {{ entry.percentage|floatformat:2 }}%
-                    </span>
-                </td>
-                </tr>
-                {% endif %}
-                {% if entry.rank >= 4 %}
-                <tr class="rank-{{ entry.rank|default:'' }}">
-                    <td>
-                        {{ entry.rank }}
-                    </td>
-                    <td>--------</td>
-                    <td>--------</td>
-                    <td>{{ entry.score|floatformat:2 }}</td>
-                    <td>
-                        <span class="percentage">
-                            {{ entry.percentage|floatformat:2 }}%
-                        </span>
-                    </td>
-                </tr>
-                {% endif %}
-
-                {% empty %}
-                <tr>
-                    <td colspan="7" style="text-align: center; padding: 40px;">
-                        هنوز شرکت‌کننده‌ای این آزمون ندارد!
-                    </td>
-                </tr>
-                {% endfor %}
-        </tbody>
-    </table>
-
-    {% if scoreboard.has_other_pages %}
-    <div class="pagination">
-        {% if scoreboard.has_previous %}
-        <a
-            href="?page=1{% if search %}&search={{ search }}{% endif %}{% if show_top %}&top={{ show_top }}{% endif %}{% if limit %}&limit={{ limit }}{% endif %}">«
-            First</a>
-        <a
-            href="?page={{ scoreboard.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if show_top %}&top={{ show_top }}{% endif %}{% if limit %}&limit={{ limit }}{% endif %}">Previous</a>
-        {% endif %}
-
-        <span class="current">Page {{ scoreboard.number }} of {{ scoreboard.paginator.num_pages }}</span>
-
-        {% if scoreboard.has_next %}
-        <a
-            href="?page={{ scoreboard.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if show_top %}&top={{ show_top }}{% endif %}{% if limit %}&limit={{ limit }}{% endif %}">Next</a>
-        <a
-            href="?page={{ scoreboard.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if show_top %}&top={{ show_top }}{% endif %}{% if limit %}&limit={{ limit }}{% endif %}">Last
-            »</a>
-        {% endif %}
-    </div>
-    {% endif %}
-    </div>
-
     <script>
+        // Theme toggle functionality
+        (function() {
+            var THEME_KEY = 'hellix-theme';
+
+            function getTheme() {
+                return localStorage.getItem(THEME_KEY) ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            }
+
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem(THEME_KEY, theme);
+            }
+
+            applyTheme(getTheme());
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById('themeToggle');
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        var current = document.documentElement.getAttribute('data-theme');
+                        var newTheme = current === 'dark' ? 'light' : 'dark';
+                        applyTheme(newTheme);
+                    });
+                }
+            });
+        })();
+
         // Handle filter form submission
-        document.querySelectorAll('select[name="top"], select[name="limit"]').forEach(select => {
-            select.addEventListener('change', function () {
-                const form = document.getElementById('filter-form');
-                document.getElementById('top-input').value = document.querySelector('select[name="top"]').value;
-                document.getElementById('limit-input').value = document.querySelector('select[name="limit"]').value;
-                form.submit();
+        document.addEventListener('DOMContentLoaded', function() {
+            const topSelect = document.getElementById('topSelect');
+            const limitSelect = document.getElementById('limitSelect');
+            const searchInput = document.getElementById('searchInput');
+            const filterForm = document.getElementById('filter-form');
+            
+            // Debounce function for search
+            let searchTimeout;
+            
+            function submitFilter() {
+                document.getElementById('top-input').value = topSelect?.value || '';
+                document.getElementById('limit-input').value = limitSelect?.value || '10';
+                document.getElementById('search-input').value = searchInput?.value || '';
+                document.getElementById('page-input').value = '1';
+                filterForm.submit();
+            }
+            
+            // Top select change
+            if (topSelect) {
+                topSelect.addEventListener('change', submitFilter);
+            }
+            
+            // Limit select change
+            if (limitSelect) {
+                limitSelect.addEventListener('change', submitFilter);
+            }
+            
+            // Search input with debounce
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(submitFilter, 500);
+                });
+            }
+        });
+        
+        // Add animation to table rows on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.scoreboard-table tbody tr');
+            rows.forEach((row, index) => {
+                row.style.opacity = '0';
+                setTimeout(() => {
+                    row.style.transition = 'opacity 0.3s ease';
+                    row.style.opacity = '1';
+                }, index * 50);
             });
         });
     </script>
 </body>
-
 </html>

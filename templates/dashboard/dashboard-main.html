@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <title>داشبورد | هلیکس</title>
+    <link rel="stylesheet" href="{% static 'css/website.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/hellix-logo-small.ico' %}" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+        <div class="dashboard-container">
+            <!-- هدر داشبورد -->
+            <header class="dashboard-header">
+                <div class="header-right">
+                    <div class="logo-icon">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h2>داشبورد کاربری</h2>
+                        <span>هلیکس — گروه آموزشی المپیاد زیست‌شناسی</span>
+                    </div>
+                </div>
+                <div class="header-left">
+                                        <button class="theme-toggle" id="1themeToggle" aria-label="تغییر تم">
+                        <i class="fas fa-sun icon-sun"></i>
+                        <i class="fas fa-moon icon-moon"></i>
+                    </button>
+                    <span class="user-welcome">خوش آمدی</span>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName">{{ request.user.username }}</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'accounts:logout' %}" class="my-link">
+                        <button id="logoutBtn" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>خروج</span>
+                        </button>
+                    </a>
+                </div>
+            </header>
+
+            <div class="main-layout">
+                <aside class="right-sidebar">
+                    <div class="sidebar-menu">
+                        <div class="sidebar-item-active" data-tab="exams">
+                            <a href="{% url 'dashboard:dashboard' %}" class="my-link">
+                                <i class="fas fa-list-check"></i>
+                                <span class="item-text">آزمون‌های من</span>
+                            </a>
+                        </div>
+                        <div class="sidebar-item" data-tab="results">
+                            <a href="{% url 'report:total' %}" class="my-link">
+                                <i class="fas fa-chart-line"></i>
+                                <span class="item-text">کارنامه</span>
+                            </a>
+                        </div>
+                        <div class="sidebar-item" data-tab="profile">
+                            <a href="{% url 'personal:profile' %}" class="my-link">
+                                <i class="fas fa-user"></i>
+                                <span class="item-text">پروفایل</span>
+                            </a>
+                        </div>
+                        <div class="sidebar-item" data-tab="help">
+                            <a href="#" class="my-link">
+                                <i class="fas fa-question-circle"></i>
+                                <span class="item-text">راهنما</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- آمار کاربر در سایدبار -->
+                    <div class="sidebar-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-check-circle"></i>
+                            <div class="stat-info">
+                                <span class="stat-value" id="completedExams">0</span>
+                                <span class="stat-label">آزمون کامل شده</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-hourglass-half"></i>
+                            <div class="stat-info">
+                                <span class="stat-value" id="pendingExams">0</span>
+                                <span class="stat-label">در انتظار</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-star"></i>
+                            <div class="stat-info">
+                                <span class="stat-value" id="avgScore">0</span>
+                                <span class="stat-label">میانگین نمره</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <main class="content-area">
+                    <div id="examsTab" class="tab-content active">
+                        <div class="exams-header">
+                            <div class="header-title">
+                                <h3><i class="fas fa-dna"></i> لیست آزمون‌های من</h3>
+                                <p class="exams-subtitle">آزمون‌های فعال و در انتظار شما</p>
+                            </div>
+                            <div class="header-actions">
+                                <form method="get" class="search-form">
+                                    <div class="search-box">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" name="search" placeholder="جستجوی آزمون..." value="{{ search_query }}" />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="exams-list-wrapper">
+                            {% if user_exams %}
+                            <ul class="exams-column-list">
+                                {% for exam in user_exams %}
+                                <li>
+                                    <span>{{ exam.exam.title }}</span>
+                                    <div class="info-group">
+                                        <div class="info-item">
+                                            <span class="main-info-label">وضعیت</span>
+                                            {% if exam.is_completed %}
+                                                <span class="main-info-value pending">
+                                                    <i class="fas fa-check-circle"></i> تمام شده
+                                                </span>
+                                            {% elif exam.exam.is_active %}
+                                                <span class="main-info-value active">
+                                                    <i class="fas fa-play-circle"></i> فعال
+                                                </span>
+                                            {% else %}
+                                                <span class="main-info-value expired">
+                                                    <i class="fas fa-clock"></i> غیرفعال
+                                                </span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="info-item">
+                                            <span class="main-info-label">تاریخ شروع</span>
+                                            <span class="main-info-value">{{ exam.exam.start_date|date:"Y/m/d" }}</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <span class="main-info-label">تاریخ پایان</span>
+                                            <span class="main-info-value">{{ exam.exam.end_date|date:"Y/m/d" }}</span>
+                                        </div>
+                                        <div class="info-item-exam-detail">
+                                            <a href="{% url 'dashboard:exam-detail' pid=exam.id %}" class="my-link">
+                                                <button class="exam-detail">
+                                                    جزئیات آزمون
+                                                    <i class="fas fa-arrow-left"></i>
+                                                </button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                            <div class="no-data">
+                                <i class="fas fa-folder-open"></i>
+                                <p>هیچ آزمونی یافت نشد</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    <script>
+        // Theme toggle functionality
+        (function() {
+            var THEME_KEY = 'hellix-theme';
+
+            function getTheme() {
+                return localStorage.getItem(THEME_KEY) ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            }
+
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem(THEME_KEY, theme);
+            }
+
+            applyTheme(getTheme());
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById('1themeToggle');
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        var current = document.documentElement.getAttribute('data-theme');
+                        applyTheme(current === 'dark' ? 'light' : 'dark');
+                    });
+                }
+            });
+        })();
+
+        // Calculate and display user stats (you can replace with actual data from backend)
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if user_exams %}
+                var completed = {{ user_exams|length }};
+                document.getElementById('completedExams').innerText = completed;
+                
+                var pending = {% if pending_count %}{{ pending_count }}{% else %}0{% endif %};
+                document.getElementById('pendingExams').innerText = pending;
+                
+                var avgScore = {% if avg_score %}{{ avg_score }}{% else %}0{% endif %};
+                document.getElementById('avgScore').innerText = avgScore;
+            {% endif %}});
+    </script>
+</body>
+
+</html>

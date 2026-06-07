@@ -11,11 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
         remainingSeconds = parseInt(timerElement.dataset.remainingSeconds);
     }
     
-    if (isNaN(remainingSeconds) || remainingSeconds <= 0) {
-        console.error("No valid remaining seconds found");
-        remainingSeconds = 3600; // 1 ساعت پیش‌فرض
-    }
-    
     const examForm = document.getElementById('examForm');
     if (!examForm) {
         console.error("Exam form not found");
@@ -46,12 +41,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (timerElement) {
             timerElement.textContent = formatTime(remainingSeconds);
             
-            // تغییر رنگ در زمان کم
-            if (remainingSeconds <= 300 && remainingSeconds > 0) {
-                timerElement.classList.add('timer-warning');
-            } else {
-                timerElement.classList.remove('timer-warning');
-            }
             
             // بروزرسانی title صفحه
             const originalTitle = document.title.replace(/^\([0-9:]+\)\s*/, '');
@@ -187,15 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // ========== توابع تایمر ==========
-    function handleExpiry() {
-        console.log("Timer expired! Auto-submitting...");
-        
-        if (timerInterval) clearInterval(timerInterval);
-        if (autoSaveInterval) clearInterval(autoSaveInterval);
-        
-        finalSubmit();
-    }
-    
     function startTimer() {
         if (remainingSeconds <= 0) {
             handleExpiry();
@@ -232,29 +212,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, AUTO_SAVE_INTERVAL);
         
-        // همچنین ذخیره خودکار هنگام خروج از صفحه (اختیاری)
-        window.addEventListener('beforeunload', function(e) {
-            if (remainingSeconds > 0 && !isSubmitting && !hasAutoSaved) {
-                // تلاش برای ذخیره همگام (synchronous)
-                const formData = new FormData(examForm);
-                formData.append('auto_save', 'true');
-                navigator.sendBeacon(examForm.action, formData);
-            }
-        });
     }
     
 
-    
-    function addBeforeUnloadWarning() {
-        window.addEventListener('beforeunload', function(e) {
-            if (remainingSeconds > 0 && !isSubmitting) {
-                e.preventDefault();
-                e.returnValue = 'آزمون شما نهایی نشده است. آیا مطمئن هستید؟';
-                return e.returnValue;
-            }
-        });
-    }
-    
+
     function handleFormSubmission() {
         examForm.addEventListener('submit', function(e) {
             if (!isSubmitting) {

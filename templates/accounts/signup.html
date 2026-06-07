@@ -1,170 +1,331 @@
-
 {% load static %}
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>ورود به حساب کاربری | سامانه آزمون‌های من</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <title>ثبت‌نام | هلیکس — گروه آموزشی المپیاد زیست‌شناسی</title>
+    <link rel="stylesheet" href="{% static 'css/website.css' %}">
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/hellix-logo-small.ico' %}" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <div class="login-container">
-        <!-- بخش سمت راست - فرم ورود -->
-        <div class="login-left">
-            <div class="login-card">
-                <div class="login-header">
-                    <div class="logo-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>  
-                    <p>برای ورود به سامانه، اطلاعات حساب خود را وارد کنید</p>
-                </div>
+    <div class="signup-page-wrapper">
+        <!-- Floating Theme Toggle Button -->
+        <button class="theme-toggle-floating" id="themeToggle" aria-label="تغییر تم">
+            <i class="fas fa-sun icon-sun"></i>
+            <i class="fas fa-moon icon-moon"></i>
+        </button>
 
-                <form class="login-form" id="loginForm" method="post"  action="{% url 'accounts:login' %}">
-                   {% csrf_token %}
-                    <div class="input-group">
-                        <label for="username">
-                            <i class="fas fa-user"></i>
-                            <span>نام کاربری</span>
-                        </label>
-                        <input type="text"  name="username" placeholder="example@domain.com یا username" autocomplete="off" required>
-                        <div class="input-error" id="usernameError"></div>
+        <!-- DNA Background Decoration -->
+        <div class="signup-dna-bg">
+            <svg viewBox="0 0 400 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M350 50 Q250 150 350 250 Q450 350 350 450 Q250 550 350 600" stroke="var(--dna-stroke)" stroke-width="2" fill="none"/>
+                <path d="M350 50 Q450 150 350 250 Q250 350 350 450 Q450 550 350 600" stroke="var(--dna-stroke)" stroke-width="2" fill="none"/>
+                <line x1="350" y1="130" x2="300" y2="130" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+                <line x1="350" y1="220" x2="400" y2="220" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+                <line x1="350" y1="310" x2="310" y2="310" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+                <line x1="350" y1="400" x2="390" y2="400" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+                <line x1="350" y1="490" x2="305" y2="490" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+            </svg>
+            <svg viewBox="0 0 400 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 50 Q150 150 50 250 Q-50 350 50 450 Q150 550 50 600" stroke="var(--dna-stroke)" stroke-width="2" fill="none"/>
+                <path d="M50 50 Q-50 150 50 250 Q150 350 50 450 Q-50 550 50 600" stroke="var(--dna-stroke)" stroke-width="2" fill="none"/>
+            </svg>
+        </div>
+
+        <div class="signup-container">
+            <!-- Right Side - Form (for RTL layout) -->
+            <div class="signup-left">
+                <div class="signup-card">
+                    <div class="signup-header">
+                            <a href="{% url 'website:home' %}" class="nav-logo">
+            <img src="{% static 'images/hellix-logo-small.png' %}" alt="هلیکس" class="nav-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        </a>
+
+                        
+                        <h1>ایجاد حساب کاربری</h1>
+                        <p>به جمع قهرمانان المپیاد زیست‌شناسی بپیوندید</p>
                     </div>
 
-                    <div class="input-group">
-                        <label for="username">
-                            <i class="fas fa-user"></i>
-                            <span>شماره تماس</span>
-                        </label>
-                        <input type="text"  name="phone" placeholder="09120000000" autocomplete="off" required>
-                        <div class="input-error" id="usernameError"></div>
-                    </div>
-
-                                        <div class="input-group">
-                        <label for="username">
-                            <i class="fas fa-user"></i>
-                            <span>رمز عبور</span>
-                        </label>
-                        <input type="text"  name="password1" placeholder="********" autocomplete="off" required>
-                        <div class="input-error" id="usernameError"></div>
-                    </div>
-
-                    <div class="input-group">
-                        <label for="password">
-                            <i class="fas fa-lock"></i>
-                            <span>تکرار رمز عبور</span>
-                        </label>
-                        <div class="password-wrapper">
-                            <input type="password"  name="password2" placeholder="********" required>
-                            <button type="submit" class="toggle-password" id="togglePassword">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                        <div class="input-error" id="passwordError"></div>
-                    </div>
-
-                    <div class="form-options">
-                        <label class="checkbox-label">
-                            <input type="checkbox" name="remember" id="remember">
-                            <span class="checkmark-custom"></span>
-                            <span>مرا به خاطر بسپار</span>
-                        </label>
+                    <form class="signup-form" id="signupForm" method="post" action="{% url 'accounts:signup' %}">
+    {% csrf_token %}
     
+    <div class="input-group">
+        <label for="username">
+            <i class="fas fa-user"></i>
+            <span>نام کاربری</span>
+        </label>
+        <input type="text" id="username" name="username" placeholder="" autocomplete="off" required>
+        <div class="input-error" id="usernameError">
+            {{ form.username.errors }}
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label for="phone">
+            <i class="fas fa-envelope"></i>
+            <span>ایمیل</span>
+        </label>
+        <input type="tel" id="phone" name="email" placeholder="" autocomplete="off" required>
+        <div class="input-error" id="phoneError">
+            {{ form.email.errors }}
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label for="password1">
+            <i class="fas fa-lock"></i>
+            <span>رمز عبور</span>
+        </label>
+        <div class="password-wrapper">
+            <input type="password" id="password1" name="password1" placeholder="********" required>
+            <button type="button" class="toggle-password" data-target="password1">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <div class="password-strength" id="passwordStrength">
+            <div class="strength-bar">
+                <div class="strength-fill" id="strengthFill"></div>
+            </div>
+            <div class="strength-text" id="strengthText">رمز عبور باید حداقل ۸ کاراکتر باشد</div>
+        </div>
+        <div class="input-error" id="password1Error">
+            {{ form.password1.errors }}
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label for="password2">
+            <i class="fas fa-lock"></i>
+            <span>تکرار رمز عبور</span>
+        </label>
+        <div class="password-wrapper">
+            <input type="password" id="password2" name="password2" placeholder="********" required>
+            <button type="button" class="toggle-password" data-target="password2">
+                <i class="fas fa-eye"></i>
+            </button>
+        </div>
+        <div class="input-error" id="password2Error">
+            {{ form.password2.errors }}
+        </div>
+    </div>
+
+    <!-- Add CAPTCHA fields here -->
+    <div class="input-group">
+        <label for="id_captcha_1">
+            <i class="fas fa-shield-alt"></i>
+            <span>کد امنیتی</span>
+        </label>
+        <div class="captcha-wrapper">
+            {{ form.captcha }}
+        </div>
+        <div class="input-error" id="captchaError">
+            {{ form.captcha.errors }}
+        </div>
+    </div>
+
+    <button type="submit" class="btn-signup" id="submitBtn">
+        <span>ثبت‌نام در هلیکس</span>
+        <i class="fas fa-arrow-left"></i>
+    </button>
+</form>
+                    <div class="signup-footer">
+                        <p>حساب کاربری دارید؟ <a href="{% url 'accounts:login' %}" id="loginLink">وارد شوید</a></p>
                     </div>
-
-                    <button type="submit" class="btn-login" id="submitBtn">
-                        <span>ورود به سامانه</span>
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-
-                </form>
-
-                <div class="login-footer">
-                    <p>حساب کاربری دارید؟ <a href="{% url 'accounts:login' %}" id="registerLink">ثبت‌نام کنید</a></p>
                 </div>
             </div>
-        </div>
 
-        <!-- بخش سمت چپ - اطلاعات و ویژگی‌ها -->
-        <div class="login-right">
-            <div class="hero-content">
-                
-                <div class="hero-badge">
-                    <i class="fas fa-chalkboard-user"></i>
-                    <span>سامانه آنلاین آزمون‌سازی</span>
+            <!-- Left Side - Hero Content -->
+            <div class="signup-right">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <i class="fas fa-chalkboard-user"></i>
+                        <span>گروه آموزشی المپیاد زیست‌شناسی</span>
+                    </div>
+                    <h2>به <span>هلیکس</span> خوش آمدید</h2>
+                    <p>با ثبت‌نام در هلیکس، به جمع بهترین‌های المپیاد زیست‌شناسی بپیوندید و از امکانات حرفه‌ای بهره‌مند شوید.</p>
+                    
                 </div>
-                <h2>به سامانه خوش آمدید</h2>
-                <p>پلتفرم پیشرفته برگزاری آزمون‌های آنلاین با امکانات حرفه‌ای</p>
 
-            <!-- اشکال تزئینی -->
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-        </div>
-    </div>
-
-    <!-- مودال فراموشی رمز عبور -->
-    <div id="forgotModal" class="modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3><i class="fas fa-key"></i> بازیابی رمز عبور</h3>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>ایمیل خود را وارد کنید. لینک بازیابی برای شما ارسال می‌شود.</p>
-                <div class="input-group">
-                    <label>آدرس ایمیل</label>
-                    <input type="email" id="resetEmail" placeholder="example@domain.com">
-                </div>
-                <button class="btn-reset" id="resetBtn">ارسال لینک بازیابی</button>
+                <!-- Decorative Shapes -->
+                <div class="shape shape-1"></div>
+                <div class="shape shape-2"></div>
+                <div class="shape shape-3"></div>
             </div>
         </div>
     </div>
 
-    <!-- اسنک بار برای اعلان‌ها -->
+    <!-- Snackbar for notifications -->
     <div id="snackbar" class="snackbar"></div>
 
-    <script src="{% static 'js/login.js' %}"></script>
+    <script>
+        // Theme toggle functionality
+        (function() {
+            var THEME_KEY = 'hellix-theme';
+
+            function getTheme() {
+                return localStorage.getItem(THEME_KEY) ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            }
+
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem(THEME_KEY, theme);
+            }
+
+            applyTheme(getTheme());
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById('themeToggle');
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        var current = document.documentElement.getAttribute('data-theme');
+                        var newTheme = current === 'dark' ? 'light' : 'dark';
+                        applyTheme(newTheme);
+                        showSnackbar('تم با موفقیت تغییر کرد', 'success');
+                    });
+                }
+            });
+        })();
+        
+        // Password visibility toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButtons = document.querySelectorAll('.toggle-password');
+            toggleButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const input = document.getElementById(targetId);
+                    if (input) {
+                        const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                        input.setAttribute('type', type);
+                        this.querySelector('i').classList.toggle('fa-eye');
+                        this.querySelector('i').classList.toggle('fa-eye-slash');
+                    }
+                });
+            });
+            
+            // Password strength checker
+            const passwordInput = document.getElementById('password1');
+            if (passwordInput) {
+                passwordInput.addEventListener('input', function() {
+                    const password = this.value;
+                    const strengthFill = document.getElementById('strengthFill');
+                    const strengthText = document.getElementById('strengthText');
+                    
+                    let strength = 0;
+                    if (password.length >= 8) strength++;
+                    if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+                    if (password.match(/[0-9]/)) strength++;
+                    if (password.match(/[^a-zA-Z0-9]/)) strength++;
+                    
+                    if (password.length === 0) {
+                        strengthFill.className = 'strength-fill';
+                        strengthText.textContent = 'رمز عبور باید حداقل ۸ کاراکتر باشد';
+                    } else if (strength === 1) {
+                        strengthFill.className = 'strength-fill weak';
+                        strengthText.textContent = 'رمز عبور ضعیف';
+                    } else if (strength === 2) {
+                        strengthFill.className = 'strength-fill fair';
+                        strengthText.textContent = 'رمز عبور متوسط';
+                    } else if (strength === 3) {
+                        strengthFill.className = 'strength-fill good';
+                        strengthText.textContent = 'رمز عبور خوب';
+                    } else if (strength === 4) {
+                        strengthFill.className = 'strength-fill strong';
+                        strengthText.textContent = 'رمز عبور قوی';
+                    }
+                });
+            }
+            
+            // Form validation
+            const signupForm = document.getElementById('signupForm');
+            if (signupForm) {
+                signupForm.addEventListener('submit', function(e) {
+                    const username = document.getElementById('username')?.value.trim();
+                    const phone = document.getElementById('phone')?.value.trim();
+                    const password1 = document.getElementById('password1')?.value;
+                    const password2 = document.getElementById('password2')?.value;
+                    const terms = document.getElementById('terms')?.checked;
+                    let hasError = false;
+                    
+                    // Username validation
+                    if (!username || username.length < 3) {
+                        showError('usernameError', 'نام کاربری باید حداقل ۳ کاراکتر باشد');
+                        hasError = true;
+                    } else {
+                        clearError('usernameError');
+                    }
+                    
+                    // Password validation
+                    if (!password1 || password1.length < 8) {
+                        showError('password1Error', 'رمز عبور باید حداقل ۸ کاراکتر باشد');
+                        hasError = true;
+                    } else {
+                        clearError('password1Error');
+                    }
+                    
+                    // Password match validation
+                    if (password1 !== password2) {
+                        showError('password2Error', 'رمز عبور با تکرار آن مطابقت ندارد');
+                        hasError = true;
+                    } else {
+                        clearError('password2Error');
+                    }
+                    
+                    
+                    if (hasError) {
+                        e.preventDefault();
+                    } else {
+                        const submitBtn = document.getElementById('submitBtn');
+                        submitBtn.classList.add('loading');
+                        submitBtn.querySelector('span').textContent = 'در حال ثبت‌نام...';
+                    }
+                });
+            }
+            
+            function showError(elementId, message) {
+                const errorEl = document.getElementById(elementId);
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.classList.add('show');
+                }
+            }
+            
+            function clearError(elementId) {
+                const errorEl = document.getElementById(elementId);
+                if (errorEl) {
+                    errorEl.classList.remove('show');
+                }
+            }
+            
+            function showSnackbar(message, type = 'info') {
+                const snackbar = document.getElementById('snackbar');
+                if (snackbar) {
+                    snackbar.textContent = message;
+                    snackbar.className = 'snackbar show ' + type;
+                    setTimeout(() => {
+                        snackbar.className = 'snackbar';
+                    }, 3000);
+                }
+            }
+        });
+        
+        // Add animation to form on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const signupCard = document.querySelector('.signup-card');
+            if (signupCard) {
+                signupCard.style.opacity = '0';
+                signupCard.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    signupCard.style.transition = 'all 0.5s ease-out';
+                    signupCard.style.opacity = '1';
+                    signupCard.style.transform = 'translateY(0)';
+                }, 100);
+            }
+        });
+    </script>
 </body>
 </html>
-
-
-
-
-<!--
-<!DOCTYPE html>
-<html lang="fa" dir="rtl"
-<div class="signup-container">
-    <h2>ثبت نام</h2>
-    <form id="signup-form" action="{% url 'accounts:signup' %}" method="post"> 
-        {% csrf_token %} 
-
-        <div class="form-group">
-            <label for="username">نام کاربری</label>
-            <input type="text" id="username" name="username"  required>
-        </div>
-
-        <div class="form-group">
-            <label for="password">رمز عبور</label>
-            <input type="password" id="password" name="password1"  required minlength="8">
-        </div>
-
-        <div class="form-group">
-            <label for="confirm_password">تأیید رمز عبور</label>
-            <input type="password" id="confirm_password" name="password2"  required minlength="8">
-        </div>
-
-        <button type="submit">ثبت نام</button>
-
-        <div class="footer-text">
-            قبلاً حساب کاربری داشته‌اید؟ <a href="{% url 'accounts:login' %}">ورود</a>
-        </div>
-    </form>
-</div>
-
-</body>
-</html>
-
--->

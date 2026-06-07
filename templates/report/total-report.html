@@ -1,164 +1,386 @@
-{% extends 'dashboard-main.html' %}
 {% load static %}
-{% block content %}
-<aside class="right-sidebar">
-    <div class="sidebar-menu">
-        <div class="sidebar-menu">
-            <div class="sidebar-item" data-tab="exams">
-                <a href="{% url 'dashboard:dashboard' %}" class="my-link">
-                    <span class="item-text">آزمون‌های من</span>
-                </a>
-            </div>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>کارنامه | هلیکس — گروه آموزشی المپیاد زیست‌شناسی</title>
+    <link rel="stylesheet" href="{% static 'css/website.css' %}">
+    <link rel="stylesheet" href="{% static 'css/total-report.css' %}">
+    <link rel="shortcut icon" href="{% static 'images/hellix-logo-small.ico' %}" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
 
-            <div class="sidebar-item-active" data-tab="results">
-                <a href="{% url 'report:total' %}" class="my-link">
-                    <span class="item-text">کارنامه</span>
-                </a>
-            </div>
-        </div>
-        <div class="sidebar-menu">
-            <div class="sidebar-item" data-tab="exams">
-                <a href="{% url 'personal:profile' %}" class="my-link">
-                    <span class="item-text">پروفایل</span>
-                </a>
-            </div>
-
-            <div class="sidebar-item" data-tab="results">
-                <a href="{% url 'dashboard:dashboard' %}" class="my-link">
-                    <span class="item-text">راهنما</span>
-                </a>
-            </div>
-        </div>
-        <!-- آمار کاربر در سایدبار -->
-        <div class="sidebar-stats">
-            <div class="stat-card">
-                <i class="fas fa-check-circle"></i>
-                <div class="stat-info">
-                    <span class="stat-value" id="completedExams">0</span>
-                    <span class="stat-label">آزمون کامل شده</span>
+        <div class="report-container">
+            <!-- Dashboard Header -->
+            <header class="dashboard-header">
+                <div class="header-right">
+                    <div class="logo-icon">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h2>کارنامه تحصیلی</h2>
+                        <span>هلیکس — گروه آموزشی المپیاد زیست‌شناسی</span>
+                    </div>
                 </div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-hourglass-half"></i>
-                <div class="stat-info">
-                    <span class="stat-value" id="pendingExams">0</span>
-                    <span class="stat-label">در انتظار</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-star"></i>
-                <div class="stat-info">
-                    <span class="stat-value" id="avgScore">0</span>
-                    <span class="stat-label">میانگین نمره</span>
-                </div>
-            </div>
-        </div>
-</aside>
-<main class="content-area">
-    <div id="examsTab" class="tab-content active">
-        <div class="exams-header">
-            <div class="header-title">
-                <h3><i class="fas fa-list-check"></i> لیست کارنامه‌های من</h3>
-                <p class="exams-subtitle">مشاهده عملکرد و نمرات شما در آزمون‌ها</p>
-            </div>
-            <div class="header-actions">
-                            <form method="get" class="search-form">
-                                <div class="search-box">
-                                    <i class="fas fa-search"></i>
-                                    <input type="text" name="search" placeholder="جستجوی آزمون..."
-                                        value="{{ search_query }}" />
-                                </div>
-                            </form>
+                <div class="header-left">
+                                        <button class="theme-toggle" id="themeToggle" aria-label="تغییر تم">
+                        <i class="fas fa-sun icon-sun"></i>
+                        <i class="fas fa-moon icon-moon"></i>
+                    </button>
+                    <span class="user-welcome">خوش آمدی</span>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-circle"></i>
                         </div>
-                        
-        </div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName">{{ request.user.username }}</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'accounts:logout' %}" class="my-link">
+                        <button id="logoutBtn" class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>خروج</span>
+                        </button>
+                    </a>
+                </div>
+            </header>
 
-
-        <!-- آمار کلی -->
-        <div class="results-stats">
-            <div class="result-card">
-                <div class="result-icon">
-                    <i class="fas fa-trophy"></i>
-                </div>
-                <div class="result-info">
-                    <span class="result-label">بهترین نمره</span>
-                    <span class="result-value">{{ best_score|default:"--" }}</span>
-                </div>
-            </div>
-            <div class="result-card">
-                <div class="result-icon">
-                    <i class="fas fa-chart-simple"></i>
-                </div>
-                <div class="result-info">
-                    <span class="result-label">میانگین نمرات</span>
-                    <span class="result-value">{{ avg_score|default:"--" }}</span>
-                </div>
-            </div>
-            <div class="result-card">
-                <div class="result-icon">
-                    <i class="fas fa-percent"></i>
-                </div>
-                <div class="result-info">
-                    <span class="result-label">درصد قبولی</span>
-                    <span class="result-value">{{ pass_percentage|default:"0" }}%</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- جدول نتایج -->
-        <div class="results-table-wrapper">
-            <table class="results-table">
-                <thead>
-                    <tr>
-                        <th>نام آزمون</th>
-                        <th>تاریخ شرکت</th>
-                        <th>نمره</th>
-                        <th>درصد</th>
-                        <th>وضعیت</th>
-                        <th>عملیات</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% if user_exams %}
-                    {% for result in user_exams %}
-                    {% if result.is_completed %}
-                    <tr>
-                        <td>{{ result.exam.title }}</td>
-                        <td>{{ result.started_date|date:"Y/m/d" }}</td>
-                        <td class="score-value">{{ result.score }}</td>
-                        <td>
-                            <div class="progress-bar">
-                                <div class="progress-fill"></div>
-                                <span class="progress-text">{{ result.percentage_score }}%</span>
-                            </div>
-                        </td>
-                        <td>
-
-                            <span class="status-badge status-passed">کامل شده</span>
-                            <!-- <span class="status-badge status-failed">✗ رد</span> 
-                                 -->
-                        </td>
-                        <td>
-                            <a href="{% url 'report:single' pid=result.id %}" class="btn-view">
-                                مشاهده جزئیات
+            <div class="main-layout">
+                <!-- Sidebar -->
+                <aside class="right-sidebar">
+                    <div class="sidebar-menu">
+                        <div class="sidebar-item" data-tab="exams">
+                            <a href="{% url 'dashboard:dashboard' %}" class="my-link">
+                                <i class="fas fa-list-check"></i>
+                                <span class="item-text">آزمون‌های من</span>
                             </a>
-                        </td>
-                    </tr>
-                    {% endif %}
-                    {% endfor %}
-                    {% else %}
-                    <tr>
-                        <td colspan="6" class="no-data">
-                            <i class="fas fa-chart-line"></i>
-                            <p>هیچ نتیجه‌ای یافت نشد</p>
-                            <small>پس از شرکت در آزمون‌ها، نتایج شما در اینجا نمایش داده می‌شود</small>
-                        </td>
-                    </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</main>
+                        </div>
+                        <div class="sidebar-item-active" data-tab="results">
+                            <a href="{% url 'report:total' %}" class="my-link">
+                                <i class="fas fa-chart-line"></i>
+                                <span class="item-text">کارنامه</span>
+                            </a>
+                        </div>
+                        <div class="sidebar-item" data-tab="profile">
+                            <a href="{% url 'personal:profile' %}" class="my-link">
+                                <i class="fas fa-user"></i>
+                                <span class="item-text">پروفایل</span>
+                            </a>
+                        </div>
+                        <div class="sidebar-item" data-tab="help">
+                            <a href="#" class="my-link">
+                                <i class="fas fa-question-circle"></i>
+                                <span class="item-text">راهنما</span>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- User Stats in Sidebar -->
+                    <div class="sidebar-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-check-circle"></i>
+                            <div class="stat-info">
+                                <span class="stat-value" id="completedExams">{{ total_completed|default:"0" }}</span>
+                                <span class="stat-label">آزمون کامل شده</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-hourglass-half"></i>
+                            <div class="stat-info">
+                                <span class="stat-value" id="pendingExams">{{ pending_exams|default:"0" }}</span>
+                                <span class="stat-label">در انتظار</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-star"></i>
+                            <div class="stat-info">
+                                <span class="stat-value" id="avgScore">{{ avg_score|default:"0" }}</span>
+                                <span class="stat-label">میانگین نمره</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
 
-{% endblock %}
+                <!-- Main Content -->
+                <main class="content-area">
+                    <div id="examsTab" class="tab-content active">
+                        <div class="exams-header">
+                            <div class="header-title">
+                                <h3><i class="fas fa-dna"></i> کارنامه تحصیلی</h3>
+                                <p class="exams-subtitle">مشاهده عملکرد و نمرات شما در آزمون‌های المپیاد زیست‌شناسی</p>
+                            </div>
+                            <div class="header-actions">
+                                <form method="get" class="search-form">
+                                    <div class="search-box">
+                                        <i class="fas fa-search"></i>
+                                        <input type="text" name="search" placeholder="جستجوی آزمون..." value="{{ search_query }}" />
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Statistics Cards -->
+                        <div class="results-stats">
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-trophy"></i>
+                                </div>
+                                <div class="result-info">
+                                    <span class="result-label">بهترین نمره</span>
+                                    <span class="result-value">{{ best_score|default:"--" }}</span>
+                                </div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-chart-simple"></i>
+                                </div>
+                                <div class="result-info">
+                                    <span class="result-label">میانگین نمرات</span>
+                                    <span class="result-value">{{ avg_score|default:"--" }}</span>
+                                </div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-percent"></i>
+                                </div>
+                                <div class="result-info">
+                                    <span class="result-label">درصد قبولی</span>
+                                    <span class="result-value">{{ pass_percentage|default:"0" }}%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results Table -->
+                        <div class="results-table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>نام آزمون</th>
+                                        <th>تاریخ شرکت</th>
+                                        <th>نمره</th>
+                                        <th>درصد</th>
+                                        <th>اسکوربورد</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if user_exams %}
+                                        {% for result in user_exams %}
+                                            {% if result.is_completed %}
+                                            <tr>
+                                                <td>
+                                                    <strong>{{ result.exam.title }}</strong>
+                                                </td>
+                                                <td>{{ result.started_date|date:"Y/m/d" }}</td>
+                                                <td class="score-value">{{ result.score }}</td>
+                                                <td>
+                                                    <div class="progress-bar">
+                                                        <div class="progress-fill" style="width: {{ result.percentage_score }}%;"></div>
+                                                        <span class="progress-text">{{ result.percentage_score }}%</span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'exam:public_scoreboard' exam_id=result.id %}" class="btn-view">
+                                                        <i class="fas fa-chart-line"></i> اسکوربورد
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <a href="{% url 'report:single' pid=result.id %}" class="btn-view">
+                                                        <i class="fas fa-chart-line"></i> مشاهده جزئیات
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="6" class="no-data">
+                                                <i class="fas fa-chart-line"></i>
+                                                <p>هیچ نتیجه‌ای یافت نشد</p>
+                                                <small>پس از شرکت در آزمون‌ها، نتایج شما در اینجا نمایش داده می‌شود</small>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+
+
+    <script>
+        // Theme toggle functionality
+        (function() {
+            var THEME_KEY = 'hellix-theme';
+
+            function getTheme() {
+                return localStorage.getItem(THEME_KEY) ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            }
+
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem(THEME_KEY, theme);
+            }
+
+            applyTheme(getTheme());
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById('themeToggle');
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        var current = document.documentElement.getAttribute('data-theme');
+                        var newTheme = current === 'dark' ? 'light' : 'dark';
+                        applyTheme(newTheme);
+                        showSnackbar('تم با موفقیت تغییر کرد', 'success');
+                    });
+                }
+            });
+        })();
+
+        // Main functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate progress bars on load
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 200);
+            });
+            
+            // Print functionality
+            const printBtn = document.getElementById('printBtn');
+            if (printBtn) {
+                printBtn.addEventListener('click', function() {
+                    window.print();
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-box input');
+            if (searchInput) {
+                searchInput.addEventListener('keyup', function(e) {
+                    const searchTerm = this.value.toLowerCase();
+                    const tableRows = document.querySelectorAll('.results-table tbody tr');
+                    
+                    tableRows.forEach(row => {
+                        if (row.classList.contains('no-data')) return;
+                        
+                        const examName = row.querySelector('td:first-child')?.innerText.toLowerCase() || '';
+                        if (examName.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                    
+                    // Show/hide no results message
+                    const visibleRows = document.querySelectorAll('.results-table tbody tr:not(.no-data)[style=""]');
+                    const noDataRow = document.querySelector('.results-table tbody tr.no-data');
+                    
+                    if (visibleRows.length === 0 && !noDataRow) {
+                        // Add no results message if not exists
+                        const tbody = document.querySelector('.results-table tbody');
+                        if (tbody && !document.querySelector('.no-results-message')) {
+                            const noResultRow = document.createElement('tr');
+                            noResultRow.className = 'no-results-message';
+                            noResultRow.innerHTML = `
+                                <td colspan="6" class="no-data">
+                                    <i class="fas fa-search"></i>
+                                    <p>نتیجه‌ای برای جستجوی شما یافت نشد</p>
+                                </td>
+                            `;
+                            tbody.appendChild(noResultRow);
+                        }
+                    } else if (visibleRows.length > 0) {
+                        const noResultMsg = document.querySelector('.no-results-message');
+                        if (noResultMsg) noResultMsg.remove();
+                    }
+                });
+            }
+            
+            // Calculate and update statistics
+            function updateStats() {
+                const rows = document.querySelectorAll('.results-table tbody tr:not(.no-data):not(.no-results-message)');
+                let totalScore = 0;
+                let completedCount = 0;
+                let bestScore = 0;
+                
+                rows.forEach(row => {
+                    const scoreCell = row.querySelector('.score-value');
+                    if (scoreCell && scoreCell.innerText !== '--') {
+                        const score = parseFloat(scoreCell.innerText);
+                        if (!isNaN(score)) {
+                            totalScore += score;
+                            completedCount++;
+                            if (score > bestScore) bestScore = score;
+                        }
+                    }
+                });
+                
+                // Update sidebar stats
+                const completedExamsEl = document.getElementById('completedExams');
+                const avgScoreEl = document.getElementById('avgScore');
+                
+                if (completedExamsEl && completedCount > 0) {
+                    completedExamsEl.innerText = completedCount;
+                }
+                
+                if (avgScoreEl && completedCount > 0) {
+                    const avgScore = (totalScore / completedCount).toFixed(2);
+                    avgScoreEl.innerText = avgScore;
+                }
+            }
+            
+            setTimeout(updateStats, 500);
+            
+            // Add hover effect to table rows
+            const tableRows = document.querySelectorAll('.results-table tbody tr');
+            tableRows.forEach(row => {
+                row.addEventListener('mouseenter', function() {
+                    this.style.transition = 'all 0.3s ease';
+                });
+            });
+        });
+        
+        // Snackbar notification function
+        function showSnackbar(message, type = 'info') {
+            let snackbar = document.getElementById('snackbar');
+            if (!snackbar) {
+                snackbar = document.createElement('div');
+                snackbar.id = 'snackbar';
+                snackbar.className = 'snackbar';
+                document.body.appendChild(snackbar);
+            }
+            
+            snackbar.textContent = message;
+            snackbar.className = 'snackbar show ' + type;
+            setTimeout(() => {
+                snackbar.className = 'snackbar';
+            }, 3000);
+        }
+        
+        // Page load animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const contentArea = document.querySelector('.content-area');
+            if (contentArea) {
+                contentArea.style.opacity = '0';
+                contentArea.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    contentArea.style.transition = 'all 0.5s ease-out';
+                    contentArea.style.opacity = '1';
+                    contentArea.style.transform = 'translateY(0)';
+                }, 100);
+            }
+        });
+    </script>
+</body>
+</html>

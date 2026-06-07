@@ -1,181 +1,350 @@
-{% extends 'dashboard-main.html' %}
 {% load static %}
-{% block content %}
-<aside class="right-sidebar">
-    <div class="sidebar-menu">
-        <div class="sidebar-menu">
+<!doctype html>
+<html lang="fa" dir="rtl" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    <title>جزئیات آزمون | هلیکس — گروه آموزشی المپیاد زیست‌شناسی</title>
+    <link rel="stylesheet" href="{% static 'css/website.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'css/dashboard-exam-detail.css' %}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link rel="shortcut icon" href="{% static 'images/hellix-logo-small.ico' %}" type="image/x-icon" />
+  </head>
+  <body>
+    <div class="exam-detail-container">
+      <!-- Dashboard Header -->
+      <header class="dashboard-header">
+        <div class="header-right">
+          <div class="logo-icon">
+            <i class="fas fa-dna"></i>
+          </div>
+          <div class="logo-text">
+            <h2>جزئیات آزمون</h2>
+            <span>هلیکس — گروه آموزشی المپیاد زیست‌شناسی</span>
+          </div>
+        </div>
+        <div class="header-left">
+          <button class="theme-toggle" id="themeToggle" aria-label="تغییر تم">
+            <i class="fas fa-sun icon-sun"></i>
+            <i class="fas fa-moon icon-moon"></i>
+          </button>
+          <span class="user-welcome">خوش آمدی</span>
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-details">
+              <span class="user-name">{{ request.user.username }}</span>
+            </div>
+          </div>
+          <a href="{% url 'accounts:logout' %}">
+            <button class="logout-btn">
+              <i class="fas fa-sign-out-alt"></i>
+              <span>خروج</span>
+            </button>
+          </a>
+        </div>
+      </header>
+
+      <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="right-sidebar">
+          <div class="sidebar-menu">
             <div class="sidebar-item-active" data-tab="exams">
-                <a href="{% url 'dashboard:dashboard' %}" class="my-link">
-                    <span class="item-text">آزمون‌های من</span>
-                </a>
+              <a href="{% url 'dashboard:dashboard' %}" class="my-link">
+                <i class="fas fa-list-check"></i>
+                <span class="item-text">آزمون‌های من</span>
+              </a>
             </div>
             <div class="sidebar-item" data-tab="results">
-                <a href="{% url 'report:total' %}" class="my-link">
-                    <span class="item-text">کارنامه</span>
-                </a>
+              <a href="{% url 'report:total' %}" class="my-link">
+                <i class="fas fa-chart-line"></i>
+                <span class="item-text">کارنامه</span>
+              </a>
             </div>
-        </div>
-        <div class="sidebar-menu">
-            <div class="sidebar-item" data-tab="exams">
-                <a href="{% url 'personal:profile' %}" class="my-link">
-                    <span class="item-text">پروفایل</span>
-                </a>
+            <div class="sidebar-item" data-tab="profile">
+              <a href="{% url 'personal:profile' %}" class="my-link">
+                <i class="fas fa-user"></i>
+                <span class="item-text">پروفایل</span>
+              </a>
             </div>
-            <div class="sidebar-item" data-tab="results">
-                <a href="{% url 'dashboard:dashboard' %}" class="my-link">
-                    <span class="item-text">راهنما</span>
-                </a>
+            <div class="sidebar-item" data-tab="help">
+              <a href="#" class="my-link">
+                <i class="fas fa-question-circle"></i>
+                <span class="item-text">راهنما</span>
+              </a>
             </div>
-        </div>
-        <!-- آمار کاربر در سایدبار -->
-        <div class="sidebar-stats">
+          </div>
+
+          <!-- User Stats in Sidebar -->
+          <div class="sidebar-stats">
             <div class="stat-card">
-                <i class="fas fa-check-circle"></i>
-                <div class="stat-info">
-                    <span class="stat-value" id="completedExams">0</span>
-                    <span class="stat-label">آزمون کامل شده</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-hourglass-half"></i>
-                <div class="stat-info">
-                    <span class="stat-value" id="pendingExams">0</span>
-                    <span class="stat-label">در انتظار</span>
-                </div>
+              <i class="fas fa-check-circle"></i>
+              <div class="stat-info">
+                <span class="stat-value" id="completedExams"
+                  >{{ total_completed|default:"0" }}</span
+                >
+                <span class="stat-label">آزمون کامل شده</span>
+              </div>
             </div>
             <div class="stat-card">
-                <i class="fas fa-star"></i>
-                <div class="stat-info">
-                    <span class="stat-value" id="avgScore">0</span>
-                    <span class="stat-label">میانگین نمره</span>
+              <i class="fas fa-hourglass-half"></i>
+              <div class="stat-info">
+                <span class="stat-value" id="pendingExams"
+                  >{{ pending_exams|default:"0" }}</span
+                >
+                <span class="stat-label">در انتظار</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <i class="fas fa-star"></i>
+              <div class="stat-info">
+                <span class="stat-value" id="avgScore"
+                  >{{ avg_score|default:"0" }}</span
+                >
+                <span class="stat-label">میانگین نمره</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content-area">
+          <!-- Breadcrumb -->
+          <div class="breadcrumb">
+            <div class="breadcrumb-item">
+              <a href="{% url 'dashboard:dashboard' %}">
+                <i class="fas fa-home"></i> داشبورد
+              </a>
+            </div>
+            <span class="breadcrumb-separator">
+              <i class="fas fa-chevron-left"></i>
+            </span>
+            <div class="breadcrumb-item active">
+              <i class="fas fa-file-alt"></i> جزئیات آزمون
+            </div>
+          </div>
+
+          <div class="exam-info-container">
+            <div class="exam-card">
+              <!-- Header -->
+              <div class="exam-card-header">
+                <h1 class="exam-title" id="examTitle">{{ title }}</h1>
+                <div class="exam-subtitle">
+                  <i class="fas fa-dna"></i>
+                  <span>گروه آموزشی المپیاد زیست‌شناسی هلیکس</span>
                 </div>
-            </div>
-        </div>
-</aside>
-<main class="content-area">
-    <div class="exam-info-container">
-        <div class="exam-card">
-            <!-- هدر -->
-            <div class="exam-card-header">
-                <h1 class="exam-title" id="examTitle">{{title}}</h1>
-                <p class="exam-subtitle">اطلاعات آزمون</p>
-            </div>
-            <!-- بدنه -->
-            <div class="exam-card-body">
-                <!-- جدول اطلاعات -->
+              </div>
+
+              <!-- Body -->
+              <div class="exam-card-body">
+                <!-- Information Grid -->
                 <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">تاریخ شروع</div>
-                            <div class="info-value" id="startDate">{{start_date}}</div>
-                        </div>
+                  <div class="info-item">
+                    <div class="info-icon">
+                      <i class="fas fa-calendar-alt"></i>
                     </div>
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">تاریخ پایان</div>
-                            <div class="info-value" id="endDate">{{end_date}}</div>
-                        </div>
+                    <div class="info-content">
+                      <div class="info-label">تاریخ شروع</div>
+                      <div class="info-value" id="startDate">
+                        {{ start_date }}
+                      </div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-hourglass-half"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">مدت آزمون</div>
-                            <div class="info-value" id="duration">{{duration_lenght}}دقیقه</div>
-                        </div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-icon">
+                      <i class="fas fa-calendar-check"></i>
                     </div>
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-question-circle"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">تعداد سوالات</div>
-                            <div class="info-value" id="totalQuestions">{{question_count}}</div>
-                        </div>
+                    <div class="info-content">
+                      <div class="info-label">تاریخ پایان</div>
+                      <div class="info-value" id="endDate">{{ end_date }}</div>
                     </div>
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-tasks"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">نوع آزمون</div>
-                            <div class="info-value" id="examType">{{type}}</div>
-                        </div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-icon">
+                      <i class="fas fa-hourglass-half"></i>
                     </div>
-                    <div class="info-item">
-                        <div class="info-icon">
-                            <i class="fas fa-flag-checkered"></i>
-                        </div>
-                        <div class="info-content">
-                            <div class="info-label">وضعیت</div>
-                            <div class="info-value" id="status">
-                                {% if is_complete %}
-                                <span class="status-value status-pending">
-                                    <i class="fas fa-play-circle"></i> تمام شده
-                                </span>
-                                {% elif is_active %}
-                                <span class="status-value status-active">
-                                    <i class="fas fa-play-circle"></i> فعال
-                                </span>
-                                {% else %}
-                                <span class="status-value status-completed">
-                                    <i class="fas fa-play-circle"></i> غیرفعال
-                                </span>
-                                {% endif %}
-                            </div>
-                        </div>
+                    <div class="info-content">
+                      <div class="info-label">مدت آزمون</div>
+                      <div class="info-value" id="duration">
+                        {{ duration_lenght }} دقیقه
+                      </div>
                     </div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-icon">
+                      <i class="fas fa-question-circle"></i>
+                    </div>
+                    <div class="info-content">
+                      <div class="info-label">تعداد سوالات</div>
+                      <div class="info-value" id="totalQuestions">
+                        {{ question_count }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-icon">
+                      <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="info-content">
+                      <div class="info-label">نوع آزمون</div>
+                      <div class="info-value" id="examType">{{ type }}</div>
+                    </div>
+                  </div>
+                  <div class="info-item">
+                    <div class="info-icon">
+                      <i class="fas fa-flag-checkered"></i>
+                    </div>
+                    <div class="info-content">
+                      <div class="info-label">وضعیت</div>
+                      <div class="info-value" id="status">
+                        {% if is_complete %}
+                        <span class="status-value status-pending">
+                          <i class="fas fa-check-circle"></i> تمام شده
+                        </span>
+                        {% elif status %}
+                        <span class="status-value status-active">
+                          <i class="fas fa-play-circle"></i> فعال
+                        </span>
+                        {% else %}
+                        <span class="status-value status-completed">
+                          <i class="fas fa-clock"></i> غیرفعال
+                        </span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <!-- توضیحات آزمون -->
+
+                <!-- Exam Description -->
                 <div class="description-section">
-                    <h4><i class="fas fa-info-circle"></i> توضیحات آزمون</h4>
-                    <p id="description">
-                    </p>
+                  <h4><i class="fas fa-info-circle"></i> توضیحات آزمون</h4>
+                  <p id="description">
+                    {{ description}}
+                  </p>
                 </div>
-                <!-- قوانین آزمون -->
+
+                <!-- Rules Section -->
                 <div class="rules-section">
-                    <h4><i class="fas fa-shield-alt"></i> قوانین و مقررات</h4>
-                    <ul class="rules-list">
-                        <li><i class="fas fa-clock"></i> زمان پاسخگویی محدود بوده و پس از اتمام زمان، دیگر قابلیت ثبت پاسخ وجود نخواهد داشت. بنابراین دقت لازمه را به عمل آورید</li>
-                        <li><i class="fas fa-ban"></i>در صورت خروج از صفحه ازمون اطلاعات شما ذخیره نمی‌شود و مجددا باید پاسخ‌های خود را وارد کنید</li>
-                        <li><i class="fas fa-save"></i>برای ثبت اطلاعات حتما یک دقیقه قبل از اتمام زمانتان دکمه ثبت را بزنید، در غیر این صورت پاسخ شما ذخیره نخواهد شد</li>
-                    </ul>
+                  <h4><i class="fas fa-shield-alt"></i> قوانین و مقررات</h4>
+                  <ul class="rules-list">
+                    <li>
+                      <i class="fas fa-clock"></i> زمان پاسخگویی محدود بوده و پس
+                      از اتمام زمان، دیگر قابلیت ثبت پاسخ وجود نخواهد داشت.
+                      بنابراین دقت لازم را به عمل آورید.
+                    </li>
+                    <li>
+                      <i class="fas fa-ban"></i> در صورت خروج از صفحه آزمون،
+                      اطلاعات شما ذخیره نمی‌شود و مجددا باید پاسخ‌های خود را
+                      وارد کنید.
+                    </li>
+                    <li>
+                      <i class="fas fa-ban"></i> در صورت انتخاب گزینه دیگر امکان عدم انتخاب را ندارید، برای اینکار باید صفحه آزمون را رفرش کنید و مجدد جواب همه سوالات را پر کنید، بنابراین هنگام انتخاب گزینه دقت عمل را داشته باشید.
+                    </li>
+                    <li>
+                      <i class="fas fa-save"></i> برای ثبت اطلاعات حتماً یک
+                      دقیقه قبل از اتمام زمان، دکمه ثبت را بزنید، در غیر این
+                      صورت پاسخ شما ذخیره نخواهد شد.
+                    </li>
+                    <li>
+                      <i class="fas fa-chart-line"></i> پس از اتمام آزمون،
+                      کارنامه شما در بخش کارنامه قابل مشاهده خواهد بود.
+                    </li>
+                  </ul>
                 </div>
-                <!-- دکمه‌های اقدام -->
+
+                <!-- Action Buttons -->
                 <div class="action-buttons">
-                    <a href="{% url 'dashboard:dashboard' %}">
-                        <button class="btn-back" id="backBtn">
-                            <i class="fas fa-arrow-right"></i> بازگشت
-                        </button>
-                    </a>
-                    {% if status%}
-                    <a href="{% url 'report:single' pid=user_exam_id %}">
-                        <button class="btn-result" id="resultBtn">
-                            <i class="fas fa-chart-line"></i> کارنامه
-                        </button>
-                    </a>
-                    <a href="{% url 'exam:public_scoreboard' exam_id=exam_id %}">
-                        <button class="btn-start" id="startExamBtn">
-                        اسکوربورد</button>
-                    </a>
-                    {% endif %}
-                    {% if not is_complete%}
-                    <a href="{% url 'exam:exam_view' exam_id=exam_id %}">
-                        <button class="btn-start" id="startExamBtn">
-                            <i class="fas fa-play"></i> شرکت در آزمون
-                        </button>
-                    </a>
-                    {% endif %}
+                  <a href="{% url 'dashboard:dashboard' %}">
+                    <button class="btn-back" id="backBtn">
+                      <i class="fas fa-arrow-right"></i> بازگشت
+                    </button>
+                  </a>
+                  {% if status %}
+                  <a href="{% url 'report:single' pid=user_exam_id %}">
+                    <button class="btn-result" id="resultBtn">
+                      <i class="fas fa-chart-line"></i> کارنامه
+                    </button>
+                  </a>
+                  <a href="{% url 'exam:public_scoreboard' exam_id=exam_id %}">
+                    <button class="btn-start" id="scoreboardBtn">
+                      <i class="fas fa-trophy"></i> اسکوربورد
+                    </button>
+                  </a>
+                  {% endif %} {% if not is_complete %}
+                  <a href="{% url 'exam:exam_view' exam_id=exam_id %}">
+                    <button class="btn-start" id="startExamBtn">
+                      <i class="fas fa-play"></i> شرکت در آزمون
+                    </button>
+                  </a>
+                  {% endif %}
                 </div>
+              </div>
             </div>
-        </div>
+          </div>
+        </main>
+      </div>
     </div>
-</main>
-{% endblock%}
+
+    <script>
+      // Theme toggle functionality
+      (function () {
+        var THEME_KEY = "hellix-theme";
+
+        function getTheme() {
+          return (
+            localStorage.getItem(THEME_KEY) ||
+            (window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light")
+          );
+        }
+
+        function applyTheme(theme) {
+          document.documentElement.setAttribute("data-theme", theme);
+          localStorage.setItem(THEME_KEY, theme);
+        }
+
+        applyTheme(getTheme());
+
+        document.addEventListener("DOMContentLoaded", function () {
+          var btn = document.getElementById("themeToggle");
+          if (btn) {
+            btn.addEventListener("click", function () {
+              var current = document.documentElement.getAttribute("data-theme");
+              var newTheme = current === "dark" ? "light" : "dark";
+              applyTheme(newTheme);
+            });
+          }
+        });
+      })();
+
+      // Animate elements on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        const examCard = document.querySelector(".exam-card");
+        if (examCard) {
+          examCard.style.opacity = "0";
+          examCard.style.transform = "translateY(20px)";
+          setTimeout(() => {
+            examCard.style.transition = "all 0.5s ease-out";
+            examCard.style.opacity = "1";
+            examCard.style.transform = "translateY(0)";
+          }, 100);
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,288 +1,581 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>سامانه آزمون‌های آنلاین | صفحه اصلی</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hellix</title>
     <link rel="stylesheet" href="{% static 'css/website.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'images/hellix-logo-small.ico' %}" type="image/x-icon" /> 
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <div class="site-container">
-        <!-- هدر با دکمه ورود -->
-        <header class="main-header">
-            <div class="header-container">
-                <div class="logo-area">
-                    <div class="logo-icon">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
-                    <div class="logo-text">
-                        <h1>سامانه آزمون‌های من</h1>
-                        <span>سامانه پیشرفته برگزاری آزمون آنلاین</span>
-                    </div>
-                </div>
-                {% if not user.is_authenticated %}
-                <div class="header-buttons">
-                    <a href="{% url 'accounts:login' %}" class="my-link" >
-                    <button  class="btn-login" >
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>ورود به پنل کاربری</span>
-                    </button>
-                    </a>
-                </div>
-                {% endif %}
 
-                {% if  user.is_authenticated %}
-                <div class="header-buttons">
-                    <a href="{% url 'dashboard:dashboard' %}" class="my-link" >
-                    <button  class="btn-login" >
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>داشبورد</span>
-                    </button>
-                    </a>
-                </div>
-                {% endif %}
-            </div>
-        </header>
+<!-- ===== NAVIGATION ===== -->
+<nav class="main-nav">
+    <div class="nav-inner">
+        <a href="{% url 'website:home' %}" class="nav-logo">
+            <img src="{% static 'images/hellix-logo-small.png' %}" alt="هلیکس" class="nav-logo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <span class="nav-logo-text">Hellix</span>
+        </a>
 
-        <!-- بخش اصلی -->
-        <main class="main-content">
-            <!-- بخش قهرمان (Hero Section) -->
-            <section class="hero-section">
-                <div class="hero-bg-shape"></div>
-                <div class="hero-container">
-                    <div class="hero-text">
-                        <div class="hero-badge">
-                            <i class="fas fa-chalkboard-user"></i>
-                            <span>سامانه آنلاین آزمون‌سازی</span>
-                        </div>
-                        <h1>آزمون‌های خود را<br>حرفه‌ای برگزار کنید</h1>
-                        <p>سامانه جامع برگزاری آزمون‌های آنلاین با امکان طراحی سوالات تشریحی، تستی، صحیح/غلط و نظارت کامل بر عملکرد کاربران</p>
-                        
-                        <div class="hero-buttons">
-                            <button class="btn-primary" id="getStartedBtn">
-                                <i class="fas fa-play"></i>
-                                شروع کنید
-                            </button>
-                            <button class="btn-outline" id="learnMoreBtn">
-                                <i class="fas fa-info-circle"></i>
-                                اطلاعات بیشتر
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="hero-image">
-                        <div class="floating-card card-1">
-                            <i class="fas fa-file-alt"></i>
-                            <span>آزمون تستی</span>
-                        </div>
-                        <div class="floating-card card-2">
-                            <i class="fas fa-table-list"></i>
-                            <span>پاسخنامه هوشمند</span>
-                        </div>
-                        <div class="floating-card card-3">
-                            <i class="fas fa-chart-line"></i>
-                            <span>آمار پیشرفته</span>
-                        </div>
-                        <div class="hero-illustration">
-                            <i class="fas fa-laptop-code"></i>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <div class="nav-links">
+            <a href="#about">درباره ما</a>
+            <a href="#products">محصولات</a>
+            <a href="#platform">سامانه آزمون</a>
+            <a href="#social">ارتباط با ما</a>
+        </div>
 
-            <!-- بخش ویژگی‌ها -->
-            <section class="features-section">
-                <div class="container">
-                    <div class="section-header">
-                        <span class="section-badge">ویژگی‌های منحصر به فرد</span>
-                        <h2>چرا سامانه ما را انتخاب می‌کنید؟</h2>
-                        <p>ابزارهای قدرتمند برای برگزاری آزمون‌های حرفه‌ای</p>
-                    </div>
-                    
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-question-circle"></i>
-                            </div>
-                            <h3>انواع سوالات</h3>
-                            <p>پشتیبانی از سوالات تستی، تشریحی، عددی و صحیح/غلط</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-chart-simple"></i>
-                            </div>
-                            <h3>آمار پیشرفته</h3>
-                            <p>گزارش‌های دقیق از عملکرد شرکت‌کنندگان</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-shield-alt"></i>
-                            </div>
-                            <h3>امنیت بالا</h3>
-                            <p>محافظت از سوالات و جلوگیری از تقلب</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-clock"></i>
-                            </div>
-                            <h3>مدیریت زمان</h3>
-                            <p>تعیین تایمر برای هر آزمون و ثبت خودکار</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-mobile-alt"></i>
-                            </div>
-                            <h3>واکنش‌گرا</h3>
-                            <p>طراحی کاملاً ریسپانسیو برای تمام دستگاه‌ها</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <div class="feature-icon">
-                                <i class="fas fa-file-pdf"></i>
-                            </div>
-                            <h3>نمایش PDF</h3>
-                            <p>نمایش سوالات به صورت PDF بدون امکان کپی</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <div class="nav-actions">
+            <button class="theme-toggle" id="themeToggle" aria-label="تغییر تم">
+                <i class="fas fa-sun icon-sun"></i>
+                <i class="fas fa-moon icon-moon"></i>
+            </button>
 
-            <!-- بخش آمار -->
-            <section class="stats-section">
-                <div class="container">
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-number" data-target="150">0</div>
-                            <div class="stat-label">آزمون برگزار شده</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" data-target="5000">0</div>
-                            <div class="stat-label">شرکت‌کننده فعال</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" data-target="98">0%</div>
-                            <div class="stat-label">رضایت کاربران</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number" data-target="24">0</div>
-                            <div class="stat-label">پشتیبانی شبانه‌روزی</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+            {% if not user.is_authenticated %}
+            <a href="{% url 'accounts:login' %}">
+                <button class="btn-nav-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    ورود
+                </button>
+            </a>
+            {% endif %}
 
-            <!-- بخش CTA -->
-            <section class="cta-section">
-                <div class="container">
-                    <div class="cta-content">
-                        <h2>آماده شروع هستید؟</h2>
-                        <p>همین حالا ثبت‌نام کنید و اولین آزمون خود را برگزار کنید</p>
-                        <div class="cta-buttons">
-                            <button class="btn-cta-primary" id="registerBtn">
-                                <i class="fas fa-user-plus"></i>
-                                ثبت‌نام رایگان
-                            </button>
-                            <button class="btn-cta-secondary" id="demoBtn">
-                                <i class="fas fa-play-circle"></i>
-                                درخواست دمو
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+            {% if user.is_authenticated %}
+            <a href="{% url 'dashboard:dashboard' %}">
+                <button class="btn-nav-dashboard">
+                    <i class="fas fa-th-large"></i>
+                    داشبورد
+                </button>
+            </a>
+            {% endif %}
 
-        <!-- فوتر -->
-        <footer class="main-footer">
-            <div class="footer-container">
-                <div class="footer-brand">
-                    <div class="footer-logo">
-                        <i class="fas fa-graduation-cap"></i>
-                        <span>سامانه آزمون‌های من</span>
-                    </div>
-                    <p>پلتفرم پیشرفته برگزاری آزمون‌های آنلاین با بالاترین کیفیت و امنیت</p>
-                </div>
-                
-                <div class="footer-links">
-                    <div class="link-group">
-                        <h4>دسترسی سریع</h4>
-                        <ul>
-                            <li><a href="#">صفحه اصلی</a></li>
-                            <li><a href="#">درباره ما</a></li>
-                            <li><a href="#">تماس با ما</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>خدمات</h4>
-                        <ul>
-                            <li><a href="#">طراحی آزمون</a></li>
-                            <li><a href="#">گزارش‌گیری</a></li>
-                            <li><a href="#">پشتیبانی</a></li>
-                        </ul>
-                    </div>
-                    
-                    <div class="link-group">
-                        <h4>قوانین</h4>
-                        <ul>
-                            <li><a href="#">حریم خصوصی</a></li>
-                            <li><a href="#">شرایط استفاده</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p>&copy; ۲۰۲۴ سامانه آزمون‌های من - تمامی حقوق محفوظ است</p>
-            </div>
-        </footer>
+            <button class="nav-mobile-toggle" id="mobileNavToggle" aria-label="منو">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
     </div>
+</nav>
 
-    <!-- مودال ورود -->
-    <div id="loginModal" class="modal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3><i class="fas fa-key"></i> ورود به حساب کاربری</h3>
-                <button class="modal-close">&times;</button>
+<!-- ===== HERO ===== -->
+<section class="hero-section">
+    <!-- SVG DNA Background -->
+    <svg class="hero-dna-bg" viewBox="0 0 600 900" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M500 50 Q350 150 500 250 Q650 350 500 450 Q350 550 500 650 Q650 750 500 850" stroke="var(--dna-stroke)" stroke-width="2" fill="none"/>
+        <path d="M500 50 Q650 150 500 250 Q350 350 500 450 Q650 550 500 650 Q350 750 500 850" stroke="var(--dna-stroke)" stroke-width="2" fill="none"/>
+        <line x1="500" y1="150" x2="430" y2="150" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+        <line x1="500" y1="200" x2="570" y2="200" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+        <line x1="500" y1="290" x2="440" y2="290" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+        <line x1="500" y1="340" x2="560" y2="340" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+        <line x1="500" y1="430" x2="435" y2="430" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+        <line x1="500" y1="480" x2="565" y2="480" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+        <line x1="500" y1="570" x2="430" y2="570" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+        <line x1="500" y1="620" x2="570" y2="620" stroke="var(--dna-stroke)" stroke-width="1.5"/>
+        <circle cx="430" cy="150" r="3" fill="var(--dna-stroke)"/>
+        <circle cx="570" cy="200" r="3" fill="var(--dna-stroke)"/>
+        <circle cx="440" cy="290" r="3" fill="var(--dna-stroke)"/>
+        <circle cx="560" cy="340" r="3" fill="var(--dna-stroke)"/>
+        <circle cx="435" cy="430" r="3" fill="var(--dna-stroke)"/>
+        <circle cx="565" cy="480" r="3" fill="var(--dna-stroke)"/>
+    </svg>
+
+    <div class="hero-inner">
+        <div class="hero-content">
+            <div class="hero-eyebrow">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                گروه آموزشی المپیاد زیست‌شناسی Hellix            </div>
+
+            <h1 class="hero-title">
+                چهار سال<br>
+                <span class="accent">تربیت قهرمانان</span><br>
+                المپیاد زیست
+            </h1>
+
+            <p class="hero-desc">
+                هلیکس از سال ۱۴۰۱ با هدف کشف و پرورش استعدادهای درخشان در المپیاد زیست‌شناسی فعالیت می‌کند. آزمون‌های اختصاصی، محتوای تخصصی و تیم مجرب ما همراه مسیر شماست.
+            </p>
+
+            <div class="hero-cta">
+                {% if not user.is_authenticated %}
+                <a href="{% url 'accounts:login' %}" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    ورود به سامانه
+                </a>
+                {% else %}
+                <a href="{% url 'dashboard:dashboard' %}" class="btn-primary">
+                    <i class="fas fa-th-large"></i>
+                    مشاهده داشبورد
+                </a>
+                {% endif %}
+                <a href="#products" class="btn-ghost">
+                    <i class="fas fa-cube"></i>
+                    محصولات ما
+                </a>
             </div>
-            <div class="modal-body">
-                <form id="loginForm">
-                    <div class="input-group">
-                        <label><i class="fas fa-envelope"></i> پست الکترونیک</label>
-                        <input type="email" placeholder="example@domain.com" required>
-                    </div>
-                    <div class="input-group">
-                        <label><i class="fas fa-lock"></i> رمز عبور</label>
-                        <input type="password" placeholder="********" required>
-                    </div>
-                    <div class="form-options">
-                        <label class="checkbox-label">
-                            <input type="checkbox"> مرا به خاطر بسپار
-                        </label>
-                        <a href="#" class="forgot-link">فراموشی رمز عبور؟</a>
-                    </div>
-                    <button type="submit" class="btn-submit">
-                        <i class="fas fa-arrow-left"></i>
-                        ورود به سامانه
-                    </button>
-                </form>
-                <div class="modal-footer">
-                    <p>حساب کاربری ندارید؟ <a href="#" id="signupLink">ثبت‌نام کنید</a></p>
+
+            <div class="hero-stats">
+                <div class="hero-stat-item">
+                    <div class="hero-stat-value">۴</div>
+                    <div class="hero-stat-label">سال فعالیت</div>
+                </div>
+                <div class="hero-stat-item">
+                    <div class="hero-stat-value">+۲۰۰</div>
+                    <div class="hero-stat-label">دانش‌آموز فارغ‌التحصیل</div>
+                </div>
+                <div class="hero-stat-item">
+                    <div class="hero-stat-value">+۲۰</div>
+                    <div class="hero-stat-label">آزمون برگزار شده</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="hero-logo-container">
+                <div class="hero-logo-ring hero-logo-ring-1"></div>
+                <div class="hero-logo-ring hero-logo-ring-2"></div>
+                <img src="{% static 'images/hellix-logo.png' %}" alt="لوگو هلیکس" class="hero-logo-img"
+                     onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22><circle cx=%22100%22 cy=%22100%22 r=%2290%22 fill=%22%2300E5C4%22 opacity=%220.2%22/><text x=%22100%22 y=%22115%22 text-anchor=%22middle%22 font-size=%2248%22 fill=%22%2300E5C4%22>H</text></svg>'">
+            </div>
+
+            <div class="floating-chips">
+                <div class="f-chip f-chip-1">
+                    <span class="chip-dot"></span>
+                    آزمون زیست مرحله ۱
+                </div>
+                <div class="f-chip f-chip-2">
+                    <span class="chip-dot"></span>
+                    کارنامه آنلاین
+                </div>
+                <div class="f-chip f-chip-3">
+                    <span class="chip-dot"></span>
+                    محتوای تخصصی
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- اسنک بار برای اعلان‌ها -->
-    <div id="snackbar" class="snackbar"></div>
+<!-- ===== ABOUT ===== -->
+<section class="about-section" id="about">
+    <div class="about-inner">
+        <div>
+            <div class="section-label">درباره هلیکس</div>
+            <h2 class="section-title">پنج سال همراهی<br>با المپیادی‌های ایران</h2>
+            <p class="section-desc">
+                هلیکس در سال ۱۴۰۱ با تکیه بر تجربه‌ی اساتید المپیادی و با هدف ایجاد یک بستر آموزشی جامع برای علاقه‌مندان به زیست‌شناسی تأسیس شد. طی این سال‌ها دانش‌آموزان زیادی از طریق برنامه‌های ما موفق به کسب مدال و رتبه‌های برتر شده‌اند.
+            </p>
+            <br>
+            <p class="section-desc">
+                رویکرد ما ترکیبی از آموزش عمیق مفاهیم، تمرین مستمر با آزمون‌های اختصاصی و بازخورد دقیق است. سامانه آزمون آنلاین هلیکس ابزار اصلی سنجش پیشرفت دانش‌آموزان در مسیر المپیاد است.
+            </p>
+        </div>
 
-    <script src="{% static 'js/website.js' %}"></script>
+        <div class="about-milestones">
+            <div class="milestone-item">
+                <div class="milestone-value">۱۴۰۱</div>
+                <div class="milestone-label">سال تأسیس</div>
+            </div>
+            <div class="milestone-item">
+                <div class="milestone-value">+۲۰۰</div>
+                <div class="milestone-label">دانش‌آموز موفق</div>
+            </div>
+            <div class="milestone-item">
+                <div class="milestone-value">+۲۰</div>
+                <div class="milestone-label">آزمون تخصصی</div>
+            </div>
+            <div class="milestone-item">
+                <div class="milestone-value">۲۴/۷</div>
+                <div class="milestone-label">دسترسی آنلاین</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== PRODUCTS ===== -->
+<section class="products-section" id="products">
+    <div class="container">
+        <div class="section-head">
+            <div class="section-label">محصولات ما</div>
+            <h2 class="section-title">ابزارهای هلیکس برای موفقیت شما</h2>
+            <p class="section-desc">از آزمون‌های آنلاین تا محتوای آموزشی تخصصی — همه چیز در یک مجموعه</p>
+        </div>
+
+        <div class="products-grid">
+            <!-- Featured Product -->
+            <div class="product-card product-card-featured">
+                <div>
+                    <div class="product-featured-badge">
+                        <i class="fas fa-star"></i>
+                        محصول اصلی
+                    </div>
+                    <h3 class="product-title">سامانه آزمون آنلاین هلیکس</h3>
+                    <p class="product-desc">
+                        پیشرفته‌ترین بستر آزمون المپیاد زیست در ایران. شامل سوالات تستی، تشریحی، کارنامه هوشمند، آمار دقیق و تایمر اختصاصی. دسترسی ۲۴ساعته از هر دستگاه.
+                    </p>
+                    <a href="{% url 'dashboard:dashboard' %}" class="product-link">
+                        ورود به سامانه
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                </div>
+                <div class="product-featured-visual">
+                    <div class="product-featured-icon">
+                        <i class="fas fa-flask" style="color: var(--teal-mid);"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h3 class="product-title">جزوات تخصصی</h3>
+                <p class="product-desc">جزوات آموزشی جامع تمامی فصول زیست‌شناسی المپیادی با رویکرد مسئله‌محور.</p>
+                <a href="#" class="product-link">
+                    مشاهده
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="product-title">گزارش پیشرفت</h3>
+                <p class="product-desc">آمار دقیق و تحلیل نقاط ضعف و قوت با نمودارهای بصری پس از هر آزمون.</p>
+                <a href="{% url 'report:total' %}" class="product-link">
+                    مشاهده کارنامه
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="product-card">
+                <div class="product-icon">
+                    <i class="fas fa-dna"></i>
+                </div>
+                <h3 class="product-title">بانک سوال</h3>
+                <p class="product-desc"> سوالات طبقه‌بندی‌شده از مباحث مختلف زیست با پاسخ تشریحی دقیق.</p>
+                <a href="#" class="product-link">
+                    دسترسی
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="view-all-wrap">
+            <a href="#products" class="btn-view-all">
+                <i class="fas fa-grid-2"></i>
+                مشاهده همه محصولات
+                <i class="fas fa-arrow-left"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== EXAM PLATFORM ===== -->
+<section class="platform-section" id="platform">
+    <div class="platform-inner">
+        <div>
+            <div class="section-label">سامانه آزمون</div>
+            <h2 class="section-title">آزمون‌های المپیادی<br>در بالاترین سطح</h2>
+            <p class="section-desc">
+                سامانه آزمون آنلاین هلیکس با طراحی اختصاصی برای المپیاد زیست‌شناسی، تجربه‌ای منحصربه‌فرد از آزمون‌دهی حرفه‌ای را فراهم می‌کند.
+            </p>
+
+            <div class="platform-features">
+                <div class="platform-feature">
+                    <div class="pf-icon"><i class="fas fa-stopwatch"></i></div>
+                    <div class="pf-text">
+                        <h4>تایمر هوشمند</h4>
+                        <p>مدیریت دقیق زمان با ثبت خودکار پاسخ‌ها پس از پایان وقت</p>
+                    </div>
+                </div>
+                <div class="platform-feature">
+                    <div class="pf-icon"><i class="fas fa-chart-bar"></i></div>
+                    <div class="pf-text">
+                        <h4>کارنامه و تحلیل عملکرد</h4>
+                        <p>گزارش‌های دقیق نمره، رتبه و مقایسه با سایر شرکت‌کنندگان</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Preview Mock -->
+        <div class="dashboard-preview">
+            <div class="dp-header">
+                <div class="dp-dot dp-dot-red"></div>
+                <div class="dp-dot dp-dot-yellow"></div>
+                <div class="dp-dot dp-dot-green"></div>
+                <div class="dp-title-bar"></div>
+            </div>
+            <div class="dp-body">
+                <div class="dp-stat-row">
+                    <div class="dp-stat">
+                        <div class="dp-stat-val">۱۲</div>
+                        <div class="dp-stat-lbl">آزمون کامل</div>
+                    </div>
+                    <div class="dp-stat">
+                        <div class="dp-stat-val">۸۵٪</div>
+                        <div class="dp-stat-lbl">میانگین نمره</div>
+                    </div>
+                    <div class="dp-stat">
+                        <div class="dp-stat-val">۳</div>
+                        <div class="dp-stat-lbl">در انتظار</div>
+                    </div>
+                </div>
+                <div class="dp-exam-list">
+                    <div class="dp-exam-item">
+                        <span class="dp-exam-name">آزمون ژنتیک مرحله ۱</span>
+                        <span class="dp-exam-badge badge-active">فعال</span>
+                    </div>
+                    <div class="dp-exam-item">
+                        <span class="dp-exam-name">آزمون شبیه‌ساز مرحله ۲</span>
+                        <span class="dp-exam-badge badge-active">فعال</span>
+                    </div>
+                    <div class="dp-exam-item">
+                        <span class="dp-exam-name">آزمون بیوشیمی پیشرفته</span>
+                        <span class="dp-exam-badge badge-done">پایان یافته</span>
+                    </div>
+                    <div class="dp-exam-item">
+                        <span class="dp-exam-name">آزمون فیزیولوژی گیاهی</span>
+                        <span class="dp-exam-badge badge-active">فعال</span>
+                    </div>
+                    <div class="dp-exam-item">
+                        <span class="dp-exam-name">آزمون اکولوژی</span>
+                        <span class="dp-exam-badge badge-done">پایان یافته</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ===== SOCIAL ===== -->
+<section class="social-section" id="social">
+    <div class="social-inner">
+ 
+        <!-- Content -->
+        <div class="social-content">
+            <div class="section-label">ما را دنبال کنید</div>
+            <h2 class="social-title">همراه هلیکس<br>در شبکه‌های اجتماعی باشید</h2>
+            <p class="social-desc">
+                جدیدترین آزمون‌ها، محتوای آموزشی رایگان، نکات المپیادی و اخبار هلیکس را در شبکه‌های اجتماعی دنبال کنید. جامعه‌ای از هزاران المپیادی منتظر شماست.
+            </p>
+ 
+            <div class="social-cta">
+                {% if not user.is_authenticated %}
+                <a href="{% url 'accounts:login' %}" class="btn-primary">
+                    <i class="fas fa-arrow-left"></i>
+                    ورود به سامانه
+                </a>
+                <a href="{% url 'accounts:signup' %}" class="btn-ghost">
+                    <i class="fas fa-user-plus"></i>
+                    ثبت‌نام رایگان
+                </a>
+                {% else %}
+                <a href="{% url 'dashboard:dashboard' %}" class="btn-primary" >
+                    <i class="fas fa-th-large"></i>
+                    رفتن به داشبورد
+                </a>
+                {% endif %}
+            </div>
+ 
+            <div class="social-platforms" >
+ 
+                <a href="t.me/HellixBiology" target="_blank" rel="noopener" class="social-platform-card">
+                    <div class="spc-icon spc-icon-telegram">
+                        <i class="fab fa-telegram-plane"></i>
+                    </div>
+                    <div class="spc-text">
+                        <div class="spc-name">تلگرام هلیکس</div>
+                        <div class="spc-handle">@HellixBiology</div>
+                    </div>
+                    <span class="spc-follow">دنبال کردن</span>
+                </a>
+ 
+                <a href="https://instagram.com/HellixBiology" target="_blank" rel="noopener" class="social-platform-card">
+                    <div class="spc-icon spc-icon-instagram">
+                        <i class="fab fa-instagram"></i>
+                    </div>
+                    <div class="spc-text">
+                        <div class="spc-name">اینستاگرام هلیکس</div>
+                        <div class="spc-handle">@HellixBiology</div>
+                    </div>
+                    <span class="spc-follow">دنبال کردن</span>
+                </a>
+ 
+                <a href="#" target="_blank" rel="noopener" class="social-platform-card">
+                    <div class="spc-icon spc-icon-youtube">
+                        <i class="fab fa-youtube"></i>
+                    </div>
+                    <div class="spc-text">
+                        <div class="spc-name">یوتیوب هلیکس</div>
+                        <div class="spc-handle">@hellix_bio</div>
+                    </div>
+                    <span class="spc-follow">دنبال کردن</span>
+                </a>
+ 
+            </div>
+        </div>
+ 
+        <!-- Visual -->
+        <div class="social-visual">
+            <div class="social-visual-badge">
+                <span>700+ عضو فعال</span>
+            </div>
+ 
+            <div class="social-card-preview">
+                <!-- post header -->
+                <div class="scp-header">
+                    <div class="scp-avatar"><img src="{% static 'images/hellix-logo-small.png' %}" class="nav-logo-img"></div>
+                    <div class="scp-meta">
+                        <div class="scp-name">
+                            Hellix Biology
+                            <i class="fas fa-circle-check scp-verified"></i>
+                        </div>
+                        <div class="scp-sub">@HellixBiology · چند لحظه پیش</div>
+                    </div>
+                </div>
+ 
+                <!-- post body -->
+                <div class="scp-body">
+                    <p class="scp-post-text">
+                        🧬 <strong>آزمون ژنتیک مولکولی</strong> فردا برگزار می‌شود!<br>
+                        همین حالا ثبت‌نام کنید و با بهترین‌های کشور رقابت کنید. آمادگی کامل؟ ما منتظریم 💪
+                    </p>
+ 
+                    <div class="scp-post-img">
+                        <div class="scp-dna-anim">
+                            <div class="scp-dna-bar"></div>
+                            <div class="scp-dna-bar"></div>
+                            <div class="scp-dna-bar"></div>
+                            <div class="scp-dna-bar"></div>
+                            <div class="scp-dna-bar"></div>
+                            <div class="scp-dna-bar"></div>
+                            <div class="scp-dna-bar"></div>
+                        </div>
+                    </div>
+ 
+                    <div class="scp-actions">
+                        <span class="scp-action"><i class="fas fa-heart"></i> ۴۸۲</span>
+                        <span class="scp-action"><i class="fas fa-comment"></i> ۶۷</span>
+                        <span class="scp-action"><i class="fas fa-share"></i> ۱۲۴</span>
+                    </div>
+                </div>
+ 
+                <!-- card footer -->
+                <div class="scp-footer">
+                    <div class="scp-members">
+                        <div class="scp-member-avatars">
+                            <div class="scp-member-av"></div>
+                            <div class="scp-member-av" style="background:linear-gradient(135deg,#00897B,#00BFA5)"></div>
+                            <div class="scp-member-av" style="background:linear-gradient(135deg,#00B4CC,#00D4FF)"></div>
+                        </div>
+                        و ۷۰۰ نفر دیگر عضو هستند
+                    </div>
+                    <a href="https://t.me/hellix_bio" target="_blank" rel="noopener" class="scp-join-btn">
+                        عضویت
+                    </a>
+                </div>
+            </div>
+        </div>
+ 
+    </div>
+</section>
+<!-- ===== FOOTER ===== -->
+<footer class="main-footer">
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <img src="{% static 'images/hellix-logo-small.png' %}" alt="هلیکس" class="footer-logo-img">
+                <span class="nav-logo-text">Hellix</span>
+            </div>
+            <p class="footer-tagline">گروه آموزشی المپیاد زیست‌شناسی — چهار سال همراهی با قهرمانان</p>
+        </div>
+
+        <div class="footer-col">
+            <h4>دسترسی سریع</h4>
+            <ul>
+                <li><a href="#">صفحه اصلی</a></li>
+                <li><a href="#about">درباره ما</a></li>
+                <li><a href="#products">محصولات</a></li>
+                <li><a href="#platform">سامانه آزمون</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>سامانه</h4>
+            <ul>
+                {% if not user.is_authenticated %}
+                <li><a href="{% url 'accounts:login' %}">ورود</a></li>
+                <li><a href="{% url 'accounts:signup' %}">ثبت‌نام</a></li>
+                {% else %}
+                <li><a href="{% url 'dashboard:dashboard' %}">داشبورد</a></li>
+                <li><a href="{% url 'report:total' %}">کارنامه</a></li>
+                <li><a href="{% url 'personal:profile' %}">پروفایل</a></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h4>قوانین</h4>
+            <ul>
+                <li><a href="#">حریم خصوصی</a></li>
+                <li><a href="#">شرایط استفاده</a></li>
+                <li><a href="#">ارتباط با ما</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <span class="footer-copy">© <span class="footer-year">۱۴۰۵</span> هلیکس — تمامی حقوق محفوظ است</span>
+        <span class="footer-copy" style="font-size:0.75rem; opacity:0.6;">Hellix, Biology Olympiad Academic Group</span>
+    </div>
+</footer>
+
+<script>
+(function() {
+    var THEME_KEY = 'hellix-theme';
+
+    function getTheme() {
+        return localStorage.getItem(THEME_KEY) ||
+            (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    }
+
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(THEME_KEY, theme);
+    }
+
+    applyTheme(getTheme());
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var btn = document.getElementById('themeToggle');
+        if (btn) {
+            btn.addEventListener('click', function() {
+                var current = document.documentElement.getAttribute('data-theme');
+                applyTheme(current === 'dark' ? 'light' : 'dark');
+            });
+        }
+
+        var mobileToggle = document.getElementById('mobileNavToggle');
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', function() {
+                var links = document.querySelector('.nav-links');
+                if (links) {
+                    var isOpen = links.style.display === 'flex';
+                    links.style.cssText = isOpen
+                        ? ''
+                        : 'display:flex;flex-direction:column;position:fixed;top:70px;right:0;left:0;background:var(--bg-nav);backdrop-filter:blur(20px);padding:1.5rem 2rem;border-bottom:var(--nav-border);gap:0.5rem;';
+                }
+            });
+        }
+    });
+})();
+</script>
 </body>
 </html>

@@ -1,37 +1,44 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>پروفایل کاربری</title>
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+    <title>پروفایل کاربری | هلیکس</title>
+    <link rel="stylesheet" href="{% static 'css/website.css' %}">
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="{% static 'images/hellix-logo-small.ico' %}" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 
 <body>
-    <div class="dashboard-container">
-        <!-- هدر داشبورد -->
+    <div class="profile-dashboard-container">
+        <!-- Header -->
         <header class="dashboard-header">
             <div class="header-right">
                 <div class="logo-icon">
-                    <i class="fas fa-graduation-cap"></i>
+                    <i class="fas fa-dna"></i>
                 </div>
+
                 <div class="logo-text">
-                    <h2>سامانه آزمون</h2>
-                    <span>پنل کاربری</span>
+                    <h2>پروفایل کاربری</h2>
+                    <span>هلیکس — گروه آموزشی المپیاد زیست‌شناسی</span>
                 </div>
             </div>
             <div class="header-left">
+                <button class="theme-toggle" id="themeToggle" aria-label="تغییر تم">
+                    <i class="fas fa-sun icon-sun"></i>
+                    <i class="fas fa-moon icon-moon"></i>
+                </button>
                 <span class="user-welcome">خوش آمدی</span>
                 <div class="user-info">
                     <div class="user-avatar">
                         <i class="fas fa-user-circle"></i>
                     </div>
                     <div class="user-details">
-                        <span class="user-name" id="userName">{{request.user.username}}</span>
+                        <span class="user-name" id="userName">{{ request.user.username }}</span>
                     </div>
                 </div>
                 <a href="{% url 'accounts:logout' %}" class="my-link">
@@ -42,59 +49,63 @@
                 </a>
             </div>
         </header>
+
         <div class="main-layout">
             <aside class="right-sidebar">
                 <div class="sidebar-menu">
-                    <div class="sidebar-menu">
-                        <div class="sidebar-item" data-tab="exams">
-                            <a href="{% url 'dashboard:dashboard' %}" class="my-link">
-                                <span class="item-text">آزمون‌های من</span>
-                            </a>
-                        </div>
-                        <div class="sidebar-item" data-tab="results">
-                            <a href="{% url 'report:total' %}" class="my-link">
-                                <span class="item-text">کارنامه</span>
-                            </a>
+                    <div class="sidebar-item" data-tab="exams">
+                        <a href="{% url 'dashboard:dashboard' %}" class="my-link">
+                            <i class="fas fa-list-check"></i>
+                            <span class="item-text">آزمون‌های من</span>
+                        </a>
+                    </div>
+                    <div class="sidebar-item" data-tab="results">
+                        <a href="{% url 'report:total' %}" class="my-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="item-text">کارنامه</span>
+                        </a>
+                    </div>
+                    <div class="sidebar-item-active" data-tab="profile">
+                        <a href="{% url 'personal:profile' %}" class="my-link">
+                            <i class="fas fa-user"></i>
+                            <span class="item-text">پروفایل</span>
+                        </a>
+                    </div>
+                    <div class="sidebar-item" data-tab="help">
+                        <a href="#" class="my-link">
+                            <i class="fas fa-question-circle"></i>
+                            <span class="item-text">راهنما</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="sidebar-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="stat-info">
+                            <span class="stat-value" id="completedExams">0</span>
+                            <span class="stat-label">آزمون کامل شده</span>
                         </div>
                     </div>
-                    <div class="sidebar-menu">
-                        <div class="sidebar-item-active" data-tab="exams">
-                            <a href="{% url 'personal:profile' %}" class="my-link">
-                                <span class="item-text">پروفایل</span>
-                            </a>
-                        </div>
-                        <div class="sidebar-item" data-tab="results">
-                            <a href="{% url 'dashboard:dashboard' %}" class="my-link">
-                                <span class="item-text">راهنما</span>
-                            </a>
+                    <div class="stat-card">
+                        <i class="fas fa-hourglass-half"></i>
+                        <div class="stat-info">
+                            <span class="stat-value" id="pendingExams">0</span>
+                            <span class="stat-label">در انتظار</span>
                         </div>
                     </div>
-                    <div class="sidebar-stats">
-                        <div class="stat-card">
-                            <i class="fas fa-check-circle"></i>
-                            <div class="stat-info">
-                                <span class="stat-value" id="completedExams">0</span>
-                                <span class="stat-label">آزمون کامل شده</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fas fa-hourglass-half"></i>
-                            <div class="stat-info">
-                                <span class="stat-value" id="pendingExams">0</span>
-                                <span class="stat-label">در انتظار</span>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <i class="fas fa-star"></i>
-                            <div class="stat-info">
-                                <span class="stat-value" id="avgScore">0</span>
-                                <span class="stat-label">میانگین نمره</span>
-                            </div>
+                    <div class="stat-card">
+                        <i class="fas fa-star"></i>
+                        <div class="stat-info">
+                            <span class="stat-value" id="avgScore">0</span>
+                            <span class="stat-label">میانگین نمره</span>
                         </div>
                     </div>
+                </div>
             </aside>
+
             <div class="profile-container">
-                <!-- هدر پروفایل -->
+                <!-- Profile Header -->
                 <div class="profile-header">
                     <div class="profile-header-content">
                         <div class="profile-avatar">
@@ -103,98 +114,259 @@
                             </div>
                         </div>
                         <div class="profile-info">
-                            <h1 id="userFullName">{{profile.user_name}} {{profile.user_last}}</h1>
+                            <h1 id="userFullName">{{ profile.user_name }} {{ profile.user_last }}</h1>
                             <span class="user-role">
-                                <i class="fas fa-graduation-cap"></i> دانش‌آموز
+                                <i class="fas fa-graduation-cap"></i> دانش‌آموز المپیاد زیست‌شناسی
                             </span>
                         </div>
                     </div>
                 </div>
-                <!-- محتوای اصلی -->
+
+                <!-- Main Content -->
                 <div class="profile-main">
-                    <!-- منوی تب -->
+                    <!-- Tabs -->
                     <div class="profile-tabs">
                         <button class="tab-btn active" data-tab="info">
                             <i class="fas fa-user"></i> اطلاعات شخصی
                         </button>
-                        <button class="tab-btn" data-tab="security">
-                            <i class="fas fa-lock"></i> امنیت
-                        </button>
+
                     </div>
-                    <!-- تب اطلاعات شخصی -->
+
+                    <!-- Personal Info Tab -->
                     <div class="tab-content active" id="infoTab">
                         <div class="info-form">
-                             <form method="post" novalidate>
+                            <form method="post" id="profileForm" novalidate>
                                 {% csrf_token %}
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label>نام</label>
-                                    <input type="text" name="user_name" id="firstName" value="{{profile.user_name}}" placeholder="نام">
+                                <!-- Name Field -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="id_user_name">
+                                            <i class="fas fa-user"></i>
+                                            <span>نام</span>
+                                        </label>
+                                        <input type="text" id="id_user_name" name="user_name"
+                                            value="{{ form.user_name.value }}" >
+                                        <div class="input-error" id="userNameError">
+                                            {{ form.user_name.errors }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="id_user_last">
+                                            <i class="fas fa-user-tag"></i>
+                                            <span>نام خانوادگی</span>
+                                        </label>
+                                        <input type="text" id="id_user_last" name="user_last"
+                                            value="{{ form.user_last.value }}" autocomplete="off" >
+                                        <div class="input-error" id="userLastError">
+                                            {{ form.user_last.errors }}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
-                                    <label>نام خانوادگی</label>
-                                    <input type="text" name="user_last"   id="lastName" value="{{profile.user_last}}" placeholder="نام خانوادگی">
+
+                                <!-- School Field -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="id_user_school">
+                                            <i class="fas fa-school"></i>
+                                            <span>مدرسه</span>
+                                        </label>
+                                        <input type="text" id="id_user_school" name="user_school"
+                                            value="{{ form.user_school.value }}">
+                                        <div class="input-error" id="userSchoolError">
+                                            {{ form.user_school.errors }}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
-                                <label>ایمیل</label>
-                                <input type="email" name="user_name" id="email" placeholder="example@domain.com">
-                            </div>
-                            <div class="form-group">
-                                <label>نام مدرسه</label>
-                                <input type="text" name="user_school" id="email" placeholder="دبیرستان ...">
-                            </div>
-                            <button class="btn-save" id="saveInfoBtn">
-                                <i class="fas fa-save"></i> ذخیره تغییرات
-                            </button>
-                             </form>
+                                <!-- Phone Field -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="id_user_phone">
+                                            <i class="fas fa-phone"></i>
+                                            <span>شماره تماس</span>
+                                        </label>
+                                        <input type="tel" id="id_user_phone" name="user_phone"
+                                            value="{{ form.user_phone.value }}">
+                                        <div class="input-error" id="userPhoneError">
+                                            {{ form.user_phone.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn-save" >
+                                    <i class="fas fa-save"></i> ذخیره تغییرات
+                                </button>
+                            </form>
                         </div>
-                    </div>
-                    <!-- تب امنیت --
-                    <div class="tab-content" id="securityTab">
-                        <div class="password-section">
-                            <h3><i class="fas fa-key"></i> تغییر رمز عبور</h3>
-                            <div class="form-group">
-                                <label>رمز عبور فعلی</label>
-                                <input type="password" id="currentPassword" placeholder="رمز عبور فعلی را وارد کنید">
-                            </div>
-                            <div class="form-group">
-                                <label>رمز عبور جدید</label>
-                                <input type="password" id="newPassword" placeholder="رمز عبور جدید">
-                            </div>
-                            <div class="form-group">
-                                <label>تکرار رمز عبور جدید</label>
-                                <input type="password" id="confirmPassword"
-                                    placeholder="رمز عبور جدید را دوباره وارد کنید">
-                            </div>
-                            <button class="btn-save" id="changePasswordBtn">
-                                <i class="fas fa-sync-alt"></i> تغییر رمز عبور
-                            </button>
-                        </div>
-                    -->
-                    </div>
-                </div>
-            </div>
-            <!-- مودال تغییر آواتار -->
-            <div id="avatarModal" class="modal">
-                <div class="modal-container">
-                    <div class="modal-header">
-                        <h3>تغییر عکس پروفایل</h3>
-                        <button class="modal-close">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <p>آیا می‌خواهید عکس پروفایل خود را تغییر دهید؟</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn-cancel">انصراف</button>
-                        <button class="btn-confirm">انتخاب عکس</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
-    <script src="{% static 'js/dashboard.js' %}"></script>
-    <script src="{% static 'js/profile.js' %}"></script>
+
+
+
+
+    <!-- Snackbar -->
+    <div id="snackbar" class="snackbar"></div>
+
+    <script>
+        // THEME TOGGLE FUNCTIONALITY - THIS WAS MISSING
+        (function () {
+            var THEME_KEY = 'hellix-theme';
+
+            function getTheme() {
+                return localStorage.getItem(THEME_KEY) ||
+                    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            }
+
+            function applyTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem(THEME_KEY, theme);
+            }
+
+            // Apply initial theme
+            applyTheme(getTheme());
+
+            // Set up theme toggle button
+            document.addEventListener('DOMContentLoaded', function () {
+                var btn = document.getElementById('themeToggle');
+                if (btn) {
+                    btn.addEventListener('click', function () {
+                        var current = document.documentElement.getAttribute('data-theme');
+                        var newTheme = current === 'dark' ? 'light' : 'dark';
+                        applyTheme(newTheme);
+                        showSnackbar('تم با موفقیت تغییر کرد', 'success');
+                    });
+                }
+            });
+        })();
+
+        // Tab switching functionality
+        document.addEventListener('DOMContentLoaded', function () {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const tabId = this.getAttribute('data-tab');
+
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    this.classList.add('active');
+
+                    if (tabId === 'info') {
+                        document.getElementById('infoTab').classList.add('active');
+                    } else if (tabId === 'security') {
+                        document.getElementById('securityTab').classList.add('active');
+                    }
+                });
+            });
+
+            // Avatar modal
+            const editAvatarBtn = document.getElementById('editAvatarBtn');
+            const avatarModal = document.getElementById('avatarModal');
+            const modalClose = document.querySelector('.modal-close');
+            const cancelModalBtn = document.getElementById('cancelModalBtn');
+            const confirmModalBtn = document.getElementById('confirmModalBtn');
+
+            if (editAvatarBtn) {
+                editAvatarBtn.addEventListener('click', function () {
+                    avatarModal.classList.add('show');
+                });
+            }
+
+            function closeModal() {
+                avatarModal.classList.remove('show');
+            }
+
+            if (modalClose) modalClose.addEventListener('click', closeModal);
+            if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
+
+            if (confirmModalBtn) {
+                confirmModalBtn.addEventListener('click', function () {
+                    closeModal();
+                    showSnackbar('این قابلیت به زودی اضافه می‌شود', 'info');
+                });
+            }
+
+            // Profile form submission
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const submitBtn = document.getElementById('saveInfoBtn');
+                    submitBtn.classList.add('loading');
+                    submitBtn.querySelector('span').textContent = 'در حال ذخیره...';
+
+                    setTimeout(() => {
+                        submitBtn.classList.remove('loading');
+                        submitBtn.querySelector('span').textContent = 'ذخیره تغییرات';
+                        showSnackbar('اطلاعات با موفقیت ذخیره شد', 'success');
+                    }, 1000);
+                });
+            }
+
+            // Password form submission
+            const passwordForm = document.getElementById('passwordForm');
+            if (passwordForm) {
+                passwordForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const currentPassword = document.getElementById('currentPassword')?.value;
+                    const newPassword = document.getElementById('newPassword')?.value;
+                    const confirmPassword = document.getElementById('confirmPassword')?.value;
+
+                    if (!currentPassword) {
+                        showSnackbar('لطفاً رمز عبور فعلی را وارد کنید', 'error');
+                        return;
+                    }
+
+                    if (newPassword !== confirmPassword) {
+                        showSnackbar('رمز عبور جدید با تکرار آن مطابقت ندارد', 'error');
+                        return;
+                    }
+
+                    if (newPassword.length < 8) {
+                        showSnackbar('رمز عبور باید حداقل ۸ کاراکتر باشد', 'error');
+                        return;
+                    }
+
+                    const submitBtn = document.getElementById('changePasswordBtn');
+                    submitBtn.classList.add('loading');
+                    submitBtn.querySelector('span').textContent = 'در حال تغییر...';
+
+                    setTimeout(() => {
+                        submitBtn.classList.remove('loading');
+                        submitBtn.querySelector('span').textContent = 'تغییر رمز عبور';
+                        showSnackbar('رمز عبور با موفقیت تغییر کرد', 'success');
+                        document.getElementById('currentPassword').value = '';
+                        document.getElementById('newPassword').value = '';
+                        document.getElementById('confirmPassword').value = '';
+                    }, 1000);
+                });
+            }
+
+            function showSnackbar(message, type = 'info') {
+                const snackbar = document.getElementById('snackbar');
+                if (snackbar) {
+                    snackbar.textContent = message;
+                    snackbar.className = 'snackbar show ' + type;
+                    setTimeout(() => {
+                        snackbar.className = 'snackbar';
+                    }, 3000);
+                }
+            }
+
+            // Load user stats (replace with actual data from backend)
+            const completedExamsEl = document.getElementById('completedExams');
+            const pendingExamsEl = document.getElementById('pendingExams');
+            const avgScoreEl = document.getElementById('avgScore');
+
+            if (completedExamsEl) completedExamsEl.innerText = '{{ completed_exams|default:"0" }}';
+            if (pendingExamsEl) pendingExamsEl.innerText = '{{ pending_exams|default:"0" }}';
+            if (avgScoreEl) avgScoreEl.innerText = '{{ avg_score|default:"0" }}';
+        });
+    </script>
 </body>
+
 </html>

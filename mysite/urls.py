@@ -16,19 +16,28 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include,reverse
 from django.conf import settings
 from django.conf.urls import handler404
 from django.conf.urls.static import static
-from django.conf.urls import handler404
-
-from django.contrib import admin
-from django.urls import path, include
-from django.conf import settings
-from django.conf.urls import handler404
-from django.conf.urls.static import static
-from django.conf.urls import handler404
 from exam.views import custom_404_view
+from debug_toolbar.toolbar import debug_toolbar_urls
+from django.views.generic import TemplateView
+from django.contrib.sitemaps.views import sitemap
+from django.contrib.sitemaps import Sitemap
+
+class StaticViewSitemap(Sitemap):
+    changefreq = 'weekly'
+    priority = 1.0
+
+    def items(self):
+        return ['website:home', 'accounts:login', 'accounts:signup']
+
+    def location(self, item):
+        return reverse(item)
+
+sitemaps = {'static': StaticViewSitemap}
+
 
 handler404 = custom_404_view
 
@@ -40,8 +49,16 @@ urlpatterns = [
     path ("account/", include('accounts.urls')),
     path ("report/", include('report.urls')),
     path ("profile/", include('personal.urls')),
-]
+    path('robots.txt', TemplateView.as_view(
+        template_name='robots.txt',
+        content_type='text/plain'
+    )),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}),
+]+ debug_toolbar_urls()
+
 
 urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
-
+urlpatterns += [
+    path('captcha/', include('captcha.urls')),
+]

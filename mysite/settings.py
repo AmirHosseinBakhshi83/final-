@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     "dashboard",
     "report",
     "reportlab",
+    "debug_toolbar",
+    "captcha",
+    "django.contrib.sitemaps",
 ]
 
 MIDDLEWARE = [
@@ -59,6 +62,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    
 ]
 
 ROOT_URLCONF = "mysite.urls"
@@ -84,13 +89,9 @@ WSGI_APPLICATION = "mysite.wsgi.application"
 # Database — PostgreSQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'mysite_db'),
-        'USER': os.environ.get('POSTGRES_USER', 'mysite_user'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
-        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
-    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3', 
+                  }
 }
 
 
@@ -114,22 +115,6 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# --- HTTPS enforcement ---
-# Set DJANGO_HTTPS=True in production once TLS is configured
-_HTTPS = os.environ.get("DJANGO_HTTPS", "False") == "True"
-SECURE_SSL_REDIRECT = _HTTPS
-SESSION_COOKIE_SECURE = _HTTPS
-CSRF_COOKIE_SECURE = _HTTPS
-SECURE_HSTS_SECONDS = 31536000 if _HTTPS else 0
-SECURE_HSTS_INCLUDE_SUBDOMAINS = _HTTPS
-SECURE_HSTS_PRELOAD = _HTTPS
-
-# --- Security headers ---
-X_FRAME_OPTIONS = "DENY"
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-REFERRER_POLICY = "strict-origin-when-cross-origin"
-
 
 # --- Logging to stdout (Docker captures it) ---
 LOGGING = {
@@ -140,3 +125,9 @@ LOGGING = {
     },
     "root": {"handlers": ["console"], "level": "WARNING"},
 }
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1',
+]
+

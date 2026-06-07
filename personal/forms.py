@@ -9,8 +9,6 @@ class ProfileForm(forms.ModelForm):
         model = Profile
         fields = ['user_name', 'user_last', 'user_school', 'user_phone', 'user_info']
 
-
-
     def clean_user_phone(self):
         """اعتبارسنجی شماره تماس"""
         phone = self.cleaned_data.get('user_phone')

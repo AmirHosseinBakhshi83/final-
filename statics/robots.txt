@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /accounts/logout/
+Disallow: /exam/
+Disallow: /dashboard/
+Disallow: /report/
+Disallow: /personal/
+
+Sitemap: https://hellix.ir/sitemap.xml
