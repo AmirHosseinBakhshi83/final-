@@ -273,18 +273,20 @@
                       <i class="fas fa-arrow-right"></i> بازگشت
                     </button>
                   </a>
-                  {% if status %}
+                  {% if is_complete %}
                   <a href="{% url 'report:single' pid=user_exam_id %}">
                     <button class="btn-result" id="resultBtn">
                       <i class="fas fa-chart-line"></i> کارنامه
                     </button>
                   </a>
+                  {% endif %}
+                  {% if status %}
                   <a href="{% url 'exam:public_scoreboard' exam_id=exam_id %}">
                     <button class="btn-start" id="scoreboardBtn">
                       <i class="fas fa-trophy"></i> اسکوربورد
                     </button>
                   </a>
-                  {% endif %} {% if not is_complete %}
+                  {% endif %} {% if not is_complete and acitve %} 
                   <a href="{% url 'exam:exam_view' exam_id=exam_id %}">
                     <button class="btn-start" id="startExamBtn">
                       <i class="fas fa-play"></i> شرکت در آزمون

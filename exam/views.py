@@ -27,6 +27,8 @@ def custom_404_view(request, exception):
 @login_required(login_url='/accounts/login/')
 def exam_view(request, exam_id):
     exam = get_object_or_404(Exam, pk=exam_id)
+    if not exam.acitve : 
+        return redirect('/dashboard')
     pdf_url = exam.pdf_file.url
     has_user_exam = UserExam.objects.filter(
             exam=exam,
@@ -225,6 +227,9 @@ def submit_exam_ajax(request, user_exam_id):
 def public_scoreboard(request, exam_id):
     """Public view to display scoreboard with limitations"""
     exam = get_object_or_404(Exam, id=exam_id)
+    if not exam.acitve : 
+        return redirect('/dashboard')
+    
     has_user_exam = UserExam.objects.filter(
             exam=exam,
             profile=request.user.profile

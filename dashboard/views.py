@@ -28,6 +28,7 @@ def exam_detail(request, pid):
         'duration_lenght':exam.duration_lenght,
         'status':exam.status,
         'description' : exam.description,
+        'active' : exam.acitve,
 
     }
     print(context)

@@ -24,14 +24,14 @@ class QuestionInline(admin.TabularInline):  # or admin.StackedInline for vertica
     # classes = ['wide']  # Wider form
     
 class ExamAdmin(admin.ModelAdmin):
-    list_display = ['title', 'tag', 'exam_type', 'start_date', 'end_date', 
-                   'participants_count', 'scoreboard_buttons', 'scoreboard']
+    list_display = ['title','start_date', 'end_date', 'status', 'active' ,
+                    'scoreboard_buttons']
     list_filter = ['tag', 'exam_type', 'start_date']
     search_fields = ['title']
     inlines = [QuestionInline]  # This shows questions inside exam edit page
     fieldsets = (
         ('Exam Information', {
-            'fields': ('title', 'pdf_file', 'answer_pdf_file', 'status', 'tag', 'exam_type', 'question_count', 'start_date', 'end_date', 'duration_lenght')
+            'fields': ('title', 'pdf_file', 'answer_pdf_file', 'status', 'active' , 'tag', 'exam_type', 'question_count', 'start_date', 'end_date', 'duration_lenght', 'description')
         }),
     )
         

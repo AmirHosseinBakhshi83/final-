@@ -21,14 +21,16 @@ class Exam(models.Model):
     duration_lenght = models.IntegerField(default=120, null=False)
     status = models.BooleanField(default=True)
     description = models.TextField(max_length=255 , default="")
-    
+    acitve = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
     
     def is_active(self):
         if timezone.now()>self.end_date:
-            self.status = False
+            self.acitve = False
+        elif timezone.now()<self.start_date:
+            self.acitve = False
 
 
 class Question(models.Model):
