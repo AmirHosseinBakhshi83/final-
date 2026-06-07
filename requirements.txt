@@ -9,3 +9,6 @@ psycopg2-binary
 gunicorn
 python-dotenv
 reportlab
+django-simple-captcha
+django-debug-toolbar
+python-dotenv

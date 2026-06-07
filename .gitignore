@@ -1,0 +1,91 @@
+# Python & Virtual Environment
+venv/
+env/
+.env
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Database files
+db.sqlite3
+mydatabase
+*.sqlite3
+*.db
+*.sql
+
+# Django specific
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.log
+local_settings.py
+migrations/
+!migrations/__init__.py
+
+# Static and Media files
+staticfiles/
+static/
+media/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.ico
+*.svg
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Docker
+*.pid
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+*.cover
+*.py,cover
+.hypothesis/
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Package files
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Secret files
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
