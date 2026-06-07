@@ -21,6 +21,7 @@ class Exam(models.Model):
     duration_lenght = models.IntegerField(default=120, null=False)
     status = models.BooleanField(default=True)
     description = models.TextField(max_length=255 , default="")
+    
 
     def __str__(self):
         return self.title

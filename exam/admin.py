@@ -25,7 +25,7 @@ class QuestionInline(admin.TabularInline):  # or admin.StackedInline for vertica
     
 class ExamAdmin(admin.ModelAdmin):
     list_display = ['title', 'tag', 'exam_type', 'start_date', 'end_date', 
-                   'participants_count', 'scoreboard_buttons']
+                   'participants_count', 'scoreboard_buttons', 'scoreboard']
     list_filter = ['tag', 'exam_type', 'start_date']
     search_fields = ['title']
     inlines = [QuestionInline]  # This shows questions inside exam edit page
