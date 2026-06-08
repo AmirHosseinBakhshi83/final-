@@ -1,16 +1,16 @@
-from django.contrib import admin
+from django.contrib import admin,messages
 from .models import Exam,UserExam,Question, UserAnswer
-from django.contrib import admin
-from django.utils.html import format_html
-from django.urls import reverse,path
-from django.shortcuts import redirect,get_object_or_404
-from django.contrib import messages
-from django.http import HttpResponse, FileResponse
-from django.db.models import Count, Q, Avg
 from personal.models import Profile
+from django.utils.html import format_html,
+from django.urls import reverse,path
+from django.shortcuts import redirect,render
+from django.http import HttpResponse
+from django.db.models import Count, Q, Avg
+from .forms import ExcelUploadForm
+import pandas as pd
 import csv
 import io
-from datetime import datetime
+
 
 class QuestionInline(admin.TabularInline):  # or admin.StackedInline for vertical layout
     model = Question
@@ -516,6 +516,7 @@ class QuestionAdmin(admin.ModelAdmin):
 class UserExamAdmin(admin.ModelAdmin):
     list_display = ['exam', 'profile', 'is_completed', 'score', 'total_possible_score', 'percentage_score']
     list_filter = ['exam', 'is_completed']
+    autocomplete_fields = ['profile' , 'exam']
     actions = ['recalculate_selected_scores']
     
     def recalculate_selected_scores(self, request, queryset):
@@ -536,9 +537,188 @@ class UserExamAdmin(admin.ModelAdmin):
             f"Recalculated {updated_count} exam(s). Average score: {average:.2f}",
             messages.SUCCESS
         )
-    
     recalculate_selected_scores.short_description = "Recalculate scores for selected exams"
+    change_list_template = "admin/userexam_changelist.html"
 
+    def get_urls(self):
+        urls = super().get_urls()
+
+        custom_urls = [
+            path(
+                "upload-assignments/",
+                self.admin_site.admin_view(
+                    self.upload_assignments
+                ),
+                name="upload-assignments",
+            ),
+        ]
+
+        return custom_urls + urls
+
+    def upload_assignments(self, request):
+
+        if request.method == "POST":
+            form = ExcelUploadForm(
+                request.POST,
+                request.FILES
+            )
+
+            if form.is_valid():
+                excel_file = request.FILES["excel_file"]
+
+                try:
+                    df = pd.read_excel(excel_file)
+
+                    created_count = 0
+                    skipped_count = 0
+
+                    for _, row in df.iterrows():
+
+                        username = str(
+                            row["username"]
+                        ).strip()
+
+                        exam_title = str(
+                            row["exam"]
+                        ).strip()
+
+                        try:
+                            profile = Profile.objects.get(
+                                user__username=username
+                            )
+
+                            exam = Exam.objects.get(
+                                title=exam_title
+                            )
+
+                            user_exam, created = (
+                                UserExam.objects.get_or_create(
+                                    profile=profile,
+                                    exam=exam,
+                                )
+                            )
+
+                            if created:
+                                created_count += 1
+                            else:
+                                skipped_count += 1
+
+                        except Profile.DoesNotExist:
+                            skipped_count += 1
+
+                        except Exam.DoesNotExist:
+                            skipped_count += 1
+
+                    messages.success(
+                        request,
+                        f"{created_count} assignments created. "
+                        f"{skipped_count} rows skipped."
+                    )
+
+                    return redirect("../")
+
+                except Exception as e:
+                    messages.error(
+                        request,
+                        f"Import failed: {e}"
+                    )
+
+        else:
+            form = ExcelUploadForm()
+
+        context = {
+            **self.admin_site.each_context(request),
+            "title": "Assign Exams",
+            "form": form,
+        }
+
+        return render(
+            request,
+            "admin/upload_exam_assignments.html",
+            context,
+        )
+
+
+        if request.method == "POST":
+            form = ExcelUploadForm(
+                request.POST,
+                request.FILES
+            )
+
+            if form.is_valid():
+                excel_file = request.FILES["excel_file"]
+
+                try:
+                    df = pd.read_excel(excel_file)
+
+                    created_count = 0
+                    skipped_count = 0
+
+                    for _, row in df.iterrows():
+
+                        username = str(
+                            row["username"]
+                        ).strip()
+
+                        exam_title = str(
+                            row["exam"]
+                        ).strip()
+
+                        try:
+                            profile = Profile.objects.get(
+                                user__username=username
+                            )
+
+                            exam = Exam.objects.get(
+                                title=exam_title
+                            )
+
+                            user_exam, created = (
+                                UserExam.objects.get_or_create(
+                                    profile=profile,
+                                    exam=exam,
+                                )
+                            )
+
+                            if created:
+                                created_count += 1
+                            else:
+                                skipped_count += 1
+
+                        except Profile.DoesNotExist:
+                            skipped_count += 1
+
+                        except Exam.DoesNotExist:
+                            skipped_count += 1
+
+                    messages.success(
+                        request,
+                        f"{created_count} assignments created. "
+                        f"{skipped_count} rows skipped."
+                    )
+
+                    return redirect("../")
+
+                except Exception as e:
+                    messages.error(
+                        request,
+                        f"Import failed: {e}"
+                    )
+
+        else:
+            form = ExcelUploadForm()
+
+        context = {
+            **self.admin_site.each_context(request),
+            "title": "Assign Exams",
+            "form": form,
+        }
+
+        return render(
+            request,
+            "admin/upload_exam_assignments.html",
+            context,
+        )
 # Register your models here.
 admin.site.register(Exam, ExamAdmin)
 admin.site.register(Question, QuestionAdmin)

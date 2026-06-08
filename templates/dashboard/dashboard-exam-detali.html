@@ -286,12 +286,14 @@
                       <i class="fas fa-trophy"></i> اسکوربورد
                     </button>
                   </a>
-                  {% endif %} {% if not is_complete and acitve %} 
+                  {% endif %} {% if not is_complete  %} 
+                  {% if active %}
                   <a href="{% url 'exam:exam_view' exam_id=exam_id %}">
                     <button class="btn-start" id="startExamBtn">
                       <i class="fas fa-play"></i> شرکت در آزمون
                     </button>
                   </a>
+                  {% endif %}
                   {% endif %}
                 </div>
               </div>

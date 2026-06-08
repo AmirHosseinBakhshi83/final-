@@ -2,6 +2,10 @@
 from django import forms
 from .models import Profile
 
+
+class ExcelUploadForm(forms.Form):
+    excel_file = forms.FileField()
+
 class ProfileForm(forms.ModelForm):
     """فرم ویرایش پروفایل کاربر"""
     

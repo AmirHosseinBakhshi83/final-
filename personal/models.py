@@ -8,7 +8,7 @@ class Profile(models.Model):
     user_name = models.CharField(max_length=255,null=True)
     user_last = models.CharField(max_length=255,null=True)
     user_school = models.CharField(max_length=255,null=True)
-    user_phone = models.IntegerField(null=True)
+    user_phone = models.CharField(max_length=255,null=True)
     user_info = models.TextField(blank=True, null=True)
     user_email = models.EmailField(max_length=50,blank=True, null=True)
 

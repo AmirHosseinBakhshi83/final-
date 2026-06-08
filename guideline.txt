@@ -1,0 +1,7 @@
+for creating a list of users :
+/admin/personal/profile/upload-users/
+username	password	first_name	last_name	school	phone
+
+for adding an exam  for a list of users :
+/admin/exam/userexam/upload-assignments/
+username	exam

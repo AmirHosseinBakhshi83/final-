@@ -1,7 +1,9 @@
 from django import forms
 
-class ExamAnswerForm(forms.Form):
+class ExcelUploadForm(forms.Form):
+    excel_file = forms.FileField()
 
+class ExamAnswerForm(forms.Form):
     def __init__(self, *args, questions=None, **kwargs):
         super().__init__(*args, **kwargs)
         if not questions:

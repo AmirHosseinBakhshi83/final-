@@ -12,3 +12,5 @@ reportlab
 django-simple-captcha
 django-debug-toolbar
 python-dotenv
+openpyxl
+pandas
