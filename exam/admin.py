@@ -719,7 +719,14 @@ class UserExamAdmin(admin.ModelAdmin):
             "admin/upload_exam_assignments.html",
             context,
         )
+    
+class UserAnswerAdmin(admin.ModelAdmin):
+    list_display = [ 'user_exam','question', 'answer_value']
+    list_filter = ['user_exam']
+    search_fields = ['username']
+
+
 # Register your models here.
 admin.site.register(Exam, ExamAdmin)
 admin.site.register(Question, QuestionAdmin)
-admin.site.register(UserAnswer)
+admin.site.register(UserAnswer,UserAnswerAdmin)
