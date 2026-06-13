@@ -5,12 +5,14 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from .models import Exam, UserExam, UserAnswer
 from .forms import ExamAnswerForm
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods,require_GET
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
+import time
+
 
 
 
@@ -24,8 +26,15 @@ def custom_404_view(request, exception):
     }
     return render(request, '404.html', context, status=404)
 
+@require_GET
+@csrf_exempt
 @login_required(login_url='/accounts/login/')
 def exam_view(request, exam_id):
+    response = HttpResponse(content_type='application/pdf')
+    response['X-Content-Type-Options'] = 'nosniff'
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
     exam = get_object_or_404(Exam, pk=exam_id)
     if not exam.acitve : 
         return redirect('/dashboard')
@@ -132,6 +141,7 @@ def exam_view(request, exam_id):
             "pdf_url": pdf_url,
             "user_exam": user_exam,  # Pass user_exam to template
             "remaining_seconds": remaining_seconds,  # Pass initial remaining time
+            "timestamp": int(time.time()),
         },
     )
 
